@@ -5,13 +5,13 @@ namespace DiscussionForum.Models;
 public class TopicContext : DbContext
 {
     public TopicContext(DbContextOptions<TopicContext> options):base(options) {}
-    public DbSet<Topic> Topics {get; set; }
+    public DbSet<Topic> topics {get; set; }
 }
 
 public class Topic {
 
-    public int Id {get; set; }
-    public string? topicName {get; set; }
-    public int messageCount {get; set; }
-    public DateTime lastUpdated {get; set; }
+    public int id {get; set; }
+    public string? topicname {get; set; }
+    public int messagecount {get; set; }
+    public DateTime lastupdated {get; set; }
 }

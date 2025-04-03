@@ -130,3 +130,12 @@
 /Users/laurapihamaa/discussion-forum/DiscussionForum/obj/Debug/net8.0/DiscussionForum.pdb
 /Users/laurapihamaa/discussion-forum/DiscussionForum/obj/Debug/net8.0/DiscussionForum.genruntimeconfig.cache
 /Users/laurapihamaa/discussion-forum/DiscussionForum/obj/Debug/net8.0/ref/DiscussionForum.dll
+/Users/laurapihamaa/discussion-forum/DiscussionForum/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/laurapihamaa/discussion-forum/DiscussionForum/bin/Debug/net8.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+/Users/laurapihamaa/discussion-forum/DiscussionForum/bin/Debug/net8.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/laurapihamaa/discussion-forum/DiscussionForum/bin/Debug/net8.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/laurapihamaa/discussion-forum/DiscussionForum/bin/Debug/net8.0/Microsoft.IdentityModel.Logging.dll
+/Users/laurapihamaa/discussion-forum/DiscussionForum/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.dll
+/Users/laurapihamaa/discussion-forum/DiscussionForum/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/laurapihamaa/discussion-forum/DiscussionForum/bin/Debug/net8.0/Microsoft.IdentityModel.Tokens.dll
+/Users/laurapihamaa/discussion-forum/DiscussionForum/bin/Debug/net8.0/System.IdentityModel.Tokens.Jwt.dll

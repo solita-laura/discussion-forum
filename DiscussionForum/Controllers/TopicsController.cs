@@ -19,7 +19,7 @@ namespace DiscussionForum.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Topic>>> GetAllTopics()
         {
-            return await _context.Topics.ToListAsync();
+            return await _context.topics.ToListAsync();
 
         }
         
