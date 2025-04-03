@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    environment: 
+      POSTGRES_USER: admin1
+      POSTGRES_PASSWORD: admin1
+      POSTGRES_DB: discussion-forum
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5432:5432
+  adminer:
+    restart: always
+    image: adminer
+    ports:
+      - 8088:8080

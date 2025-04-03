@@ -1,0 +1,19 @@
+{
+  "Version": 1,
+  "Hash": "2u2/IKnMIY+hY7KIib2q8Jl974Wb2gPJv5klIfGuueg=",
+  "Source": "DiscussionForum",
+  "BasePath": "_content/DiscussionForum",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "DiscussionForum/wwwroot",
+      "Source": "DiscussionForum",
+      "ContentRoot": "/Users/laurapihamaa/discussion-forum/DiscussionForum/wwwroot/",
+      "BasePath": "_content/DiscussionForum",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": []
+}
