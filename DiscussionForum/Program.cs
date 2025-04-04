@@ -19,12 +19,6 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddDbContext<TopicContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<UserContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-//add identity manager
-builder.Services.AddIdentity<User, IdentityRole>()
-    .AddEntityFrameworkStores<UserContext>()
-    .AddUserManager<UserManager<User>>()
-    .AddDefaultTokenProviders();
-
 //create jwt bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options => 

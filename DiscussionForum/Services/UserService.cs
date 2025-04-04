@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using DiscussionForum.Models;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
@@ -12,12 +12,12 @@ namespace DiscussionForum.Services;
 
 public class UserService : IAuthenticationService
 {
-    private readonly UserManager<User> _userManager;
+    private readonly UserContext _context;
     private readonly IConfiguration _configuration;
 
-    public UserService (UserManager<User> userManager, IConfiguration configuration){
-        _userManager=userManager;
+    public UserService (IConfiguration configuration, UserContext context){
         _configuration=configuration;
+        _context = context;
     }
 
     public Task<AuthenticateResult> AuthenticateAsync(HttpContext context, string? scheme)
@@ -29,16 +29,23 @@ public class UserService : IAuthenticationService
 
         try{
             
-            Console.WriteLine(loginRequest.Email);
-            var user = await _userManager.FindByEmailAsync(loginRequest.Email);
+            var user = _context.users.FirstOrDefault(u => u.username.Equals(loginRequest.Username));
 
             if(user is null){
                 Console.WriteLine("no user found");
             }
 
-            if(await _userManager.CheckPasswordAsync(user, loginRequest.Password))
+            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: user.password,
+                salt: user.salt,
+                prf: KeyDerivationPrf.HMACSHA256,
+                iterationCount: 10000,
+                numBytesRequested: 256/8
+            ));
+
+            if(user.password.Equals(hashed))
             {
-                var token = GenerateJwtToken(user.UserName);
+                var token = GenerateJwtToken(user.username);
                 return token;
             }
 
