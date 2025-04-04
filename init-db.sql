@@ -11,9 +11,7 @@ VALUES (1, 'topic1', 1, '2025-03-03 12:00:00'),
 
 CREATE TABLE Users (
     Id BIGINT PRIMARY KEY,
-    userName VARCHAR(100),
-    passWord VARCHAR(100)
+    username VARCHAR(100),
+    password VARCHAR(100),
+    salt BYTEA
 );
-
-INSERT INTO Users (Id, userName, passWord)
-VALUES (1, 'user1', 'testlogin');
