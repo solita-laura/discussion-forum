@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "6VXeTgp3G9I=",
+  "dgSpecHash": "kzw4uOlant0=",
   "success": true,
   "projectFilePath": "/Users/laurapihamaa/discussion-forum/DiscussionForum/DiscussionForum.csproj",
   "expectedPackageFiles": [
@@ -22,6 +22,7 @@
     "/Users/laurapihamaa/.nuget/packages/microsoft.entityframeworkcore.abstractions/9.0.3/microsoft.entityframeworkcore.abstractions.9.0.3.nupkg.sha512",
     "/Users/laurapihamaa/.nuget/packages/microsoft.entityframeworkcore.analyzers/9.0.3/microsoft.entityframeworkcore.analyzers.9.0.3.nupkg.sha512",
     "/Users/laurapihamaa/.nuget/packages/microsoft.entityframeworkcore.design/9.0.3/microsoft.entityframeworkcore.design.9.0.3.nupkg.sha512",
+    "/Users/laurapihamaa/.nuget/packages/microsoft.entityframeworkcore.inmemory/9.0.3/microsoft.entityframeworkcore.inmemory.9.0.3.nupkg.sha512",
     "/Users/laurapihamaa/.nuget/packages/microsoft.entityframeworkcore.relational/9.0.3/microsoft.entityframeworkcore.relational.9.0.3.nupkg.sha512",
     "/Users/laurapihamaa/.nuget/packages/microsoft.entityframeworkcore.tools/9.0.3/microsoft.entityframeworkcore.tools.9.0.3.nupkg.sha512",
     "/Users/laurapihamaa/.nuget/packages/microsoft.extensions.caching.abstractions/9.0.3/microsoft.extensions.caching.abstractions.9.0.3.nupkg.sha512",

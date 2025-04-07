@@ -139,3 +139,4 @@
 /Users/laurapihamaa/discussion-forum/DiscussionForum/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 /Users/laurapihamaa/discussion-forum/DiscussionForum/bin/Debug/net8.0/Microsoft.IdentityModel.Tokens.dll
 /Users/laurapihamaa/discussion-forum/DiscussionForum/bin/Debug/net8.0/System.IdentityModel.Tokens.Jwt.dll
+/Users/laurapihamaa/discussion-forum/DiscussionForum/bin/Debug/net8.0/Microsoft.EntityFrameworkCore.InMemory.dll

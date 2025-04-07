@@ -63,7 +63,7 @@ public class UserService
     /// <returns>byte array</returns>
     /// <exception cref="Exception"></exception>
 
-    public static byte[] CreateKey (string password, byte[] salt){
+    public byte[] CreateKey (string password, byte[] salt){
         try{
             var iterations = 1000;
             var desiredKeyLength = 16; 
