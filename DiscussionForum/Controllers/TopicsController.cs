@@ -16,11 +16,19 @@ namespace DiscussionForum.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Get all topics
+        /// </summary>
+        /// <returns>List of topics</returns>
+        /// <exception cref="Exception"></exception>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Topic>>> GetAllTopics()
         {
-            return await _context.topics.ToListAsync();
-
+            try{
+                return await _context.topics.ToListAsync();
+            } catch {
+                throw new Exception("Error fetching the topics.");
+            }
         }
         
     }

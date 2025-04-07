@@ -12,6 +12,9 @@ VALUES (1, 'topic1', 1, '2025-03-03 12:00:00'),
 CREATE TABLE Users (
     Id BIGINT PRIMARY KEY,
     username VARCHAR(100),
-    password VARCHAR(100),
-    salt BYTEA
+    password VARCHAR,
+    salt VARCHAR
 );
+
+INSERT INTO users (Id, username, password, salt)
+VALUES (1, 'user1', 'eVxgcavKFAURRQ7z70Y+GWFWjJJla2Pb7qgG97sSXMnHtaxpUgYa7p4DQyz0AyMY', 'J6/zykNVdALI4kdjZrhEWA==')

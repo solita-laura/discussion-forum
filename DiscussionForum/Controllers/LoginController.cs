@@ -15,12 +15,22 @@ namespace DiscussionForum.Controllers
             _userService = userService;
         }
 
+        //username: user1 password: test12
+        /// <summary>
+        /// Controller to handle the login request
+        /// </summary>
+        /// <param name="loginRequest">LoginRequest</param>
+        /// <returns>string</returns>
+        /// <exception cref="Exception"></exception>
         [HttpPost]
-        public async Task<ActionResult<string>> LoginUser([FromBody] LoginRequest loginRequest)
+        public async Task<ActionResult<string>> LoginUser([FromBody]LoginRequest loginRequest)
         {
-            
-            var response = await _userService.Login(loginRequest);
-            return response;
+            try{
+                var response = await _userService.Login(loginRequest);
+                return response;
+            }catch{
+                throw new Exception("Error while logging in the user.");
+            }
         }
 
         
