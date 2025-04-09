@@ -6,9 +6,10 @@ namespace DiscussionForum.Models;
 
 public class UserContext : DbContext
 {
+    public UserContext(){}
     public UserContext(DbContextOptions<UserContext> options) : base(options){}
 
-    public DbSet<User> users {get; set;}
+    public virtual DbSet<User> users {get; set;}
 
 }
 
