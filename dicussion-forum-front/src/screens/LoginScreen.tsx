@@ -42,15 +42,26 @@ function LoginScreen(){
             headers: {
                 'Content-Type': 'application/json',
             },         
-            body: JSON.stringify({loginValues}),
+            body: JSON.stringify({ Username: loginValues.Username, Password: loginValues.Password }),
         })
-        .then((response) => {
+        .then(response => {
             if (response.ok) {
-                console.log(response.json());
+                console.log(response);
+                setErrorValues({Error: ''});
             } else {
-                throw new Error('Login failed');
+                console.log(response.status);
+                switch (response.status) {
+                    case 404:
+                        setErrorValues({ Error: "Username not found" });
+                        break;
+                    case 401:
+                        setErrorValues({ Error: "Incorrect password" });
+                        break;
+                    default:
+                        setErrorValues({ Error: "Error login in. Please try again" });
+                        break;
             }
-        })
+        }})
      }
 
     return (

@@ -2,6 +2,8 @@ using DiscussionForum.Models;
 using DiscussionForum.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DiscussionForum.Controllers
 {
@@ -27,9 +29,25 @@ namespace DiscussionForum.Controllers
         {
             try{
                 var response = await _userService.Login(loginRequest);
-                return response;
-            }catch{
-                throw new Exception("Error while logging in the user.");
+
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = false, //set to true if https is enabled (production etc.)
+                    SameSite = SameSiteMode.Lax,
+                    Expires = DateTimeOffset.UtcNow.AddHours(2)
+                };
+
+                Response.Cookies.Append("token", response, cookieOptions);
+                return Ok();
+            }catch (UserNotFoundException ex){
+                return NotFound(ex.Message);  
+            }
+            catch (InvalidPasswordException ex){
+                return Unauthorized(ex.Message);
+            }
+            catch (Exception ex){
+                return BadRequest("Login request failed.");
             }
         }
 

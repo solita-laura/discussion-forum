@@ -32,8 +32,7 @@ public class UserService
             var user = _context.users.FirstOrDefault(u => u.username.Equals(loginRequest.Username));
 
             if(user is null){
-                Console.WriteLine("no user found");
-                throw new Exception("No user found with the given username.");
+                throw new UserNotFoundException("No user found with the given username.");
             }
 
             byte[] salt = Convert.FromBase64String(user.salt);
@@ -47,12 +46,17 @@ public class UserService
                 return token;
             }
 
-            throw new Exception("No match in passwords."); 
+            throw new InvalidPasswordException("Invalid password."); 
 
-        }catch (Exception ex){
-            Console.WriteLine(ex.Message);
-            throw new Exception("Login request failed."); 
+        }catch (UserNotFoundException ex){
+            throw new UserNotFoundException(ex.Message); 
         }
+        catch (InvalidPasswordException ex){
+            throw new InvalidPasswordException(ex.Message);
+        }
+        catch (Exception ex){
+            throw new Exception("Error logging in the user.");
+        } 
     }
 
     /// <summary>
@@ -157,7 +161,7 @@ public class UserService
             return Encoding.Unicode.GetString(output.ToArray());
         }catch{
             Console.WriteLine("Error decrypting a password.");
-            throw new Exception("Error decrypting a password.");
+            throw new InvalidPasswordException("Invalid password.");
         }
     }
 
