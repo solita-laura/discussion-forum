@@ -1,5 +1,6 @@
 using System.Net;
 using DiscussionForum.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,7 @@ namespace DiscussionForum.Controllers
 {
     
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class TopicsController : ControllerBase
     {

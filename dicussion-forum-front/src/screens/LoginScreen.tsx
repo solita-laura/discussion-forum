@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import Form from '../components/Form';
 import { resolveConfig } from 'vite';
+import { useNavigate } from 'react-router-dom';
 
 function LoginScreen(){
 
@@ -12,6 +13,8 @@ function LoginScreen(){
     type errorValues = {
         Error: string;
     }
+
+    const navigate = useNavigate();
 
     const [loginValues, setLoginValues] = useState<loginValues>({
         Username: '',
@@ -36,7 +39,7 @@ function LoginScreen(){
             return;
         }
 
-        const response = await fetch('http://localhost:5055/api/Login', {
+        await fetch('http://localhost:5055/api/Login', {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -48,6 +51,7 @@ function LoginScreen(){
             if (response.ok) {
                 console.log(response);
                 setErrorValues({Error: ''});
+                navigate('/dashboard');
             } else {
                 console.log(response.status);
                 switch (response.status) {
