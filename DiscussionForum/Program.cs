@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using DiscussionForum.Services;
 using Microsoft.Extensions.Options;
+using DiscussionForum.DbEntities;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -26,6 +27,7 @@ builder.Services.AddScoped<UserService>();
 //add dbcontext
 builder.Services.AddDbContext<TopicContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<UserContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<MessageContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
 //create jwt bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
