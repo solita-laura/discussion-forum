@@ -44,10 +44,12 @@ function Dashboard() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-wrap justify-center">
       <h1 className="fixed top-0 w-full text-cyan-900 uppercase">Topics</h1>
       {topics ? topics.map((topic) => (
-        <div className="p-3" key={topic.id}>
+        <div onClick={() => navigate('/topic', {state: {topicId: topic.id, topicname: topic.topicname}})} 
+          className="p-3 hover:cursor-pointer" 
+          key={topic.id}>
           <Topic
             topicname={topic.topicname}
             messagecount={topic.messagecount}

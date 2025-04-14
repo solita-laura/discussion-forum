@@ -8,8 +8,8 @@ type TopicProps = {
 
 function Topic(props: TopicProps) {
   return (
-    <div className="border-2 border-cyan-950 p-2 w-2xl text-xs">
-      <h1 className="text-xs text-orange-800">{props.topicname}</h1>
+    <div className="border-2 border-b-neutral-950 p-1 w-2xl text-xs">
+      <h1 className="p-5 text-xs text-orange-800 border-b-1 border-b-gray-400">{props.topicname}</h1>
         <div className='inline-flex items-center space-x-1 p-2'>
             <p className="text-xs">{props.messagecount}</p>
             <ChatBubbleOutlineIcon/>
