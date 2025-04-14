@@ -7,8 +7,9 @@ public class MessageContext : DbContext
 {
 
     public MessageContext(DbContextOptions<MessageContext> options) : base(options) { }
+    public MessageContext() { }
 
-    public DbSet<Message> Messages { get; set; }
+    public virtual DbSet<Message> messages { get; set; }
 
 }
 

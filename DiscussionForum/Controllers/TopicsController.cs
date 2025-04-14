@@ -29,7 +29,7 @@ namespace DiscussionForum.Controllers
             try{
                 return await _context.topics.ToListAsync();
             } catch {
-                throw new Exception("Error fetching the topics.");
+                return BadRequest("Error fetching the topics.");
             }
         }
         

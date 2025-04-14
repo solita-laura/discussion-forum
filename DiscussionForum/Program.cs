@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using DiscussionForum.Services;
-using Microsoft.Extensions.Options;
 using DiscussionForum.DbEntities;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -68,3 +67,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { } //for testing purposes
