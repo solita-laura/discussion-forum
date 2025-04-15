@@ -1,9 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using System.Numerics;
 using DiscussionForum.DbEntities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,13 +23,29 @@ namespace DiscussionForum.Controllers
         {
             try
             {
-                var messages = await _context.messages.Where(m => m.topicid == id).ToListAsync();
+                var messages = await _context.messages.Where(m => m.topicid == id).OrderBy(m => m.postdate).ToListAsync();
                 return Ok(messages);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return BadRequest("Error fetching messages");
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateMessage([FromBody] Message message)
+        {
+            try
+            {
+                _context.messages.Add(message);
+                await _context.SaveChangesAsync();
+                return Ok("message created successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest("Error creating message");
             }
         }
 
