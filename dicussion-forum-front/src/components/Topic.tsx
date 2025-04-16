@@ -15,7 +15,9 @@ function Topic(props: TopicProps) {
             <ChatBubbleOutlineIcon/>
         </div>
         <div></div>
-        <p>Latest message: {props.lastupdated.toLocaleDateString()}</p>
+        {props.messagecount > 0 ? (
+        <p>Latest message: {props.lastupdated.toLocaleDateString()}</p>) : 
+        <p>No messages posted!</p>}
     </div>
   );
 }

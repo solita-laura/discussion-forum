@@ -35,7 +35,6 @@ function LoginScreen(){
         event.preventDefault();
 
         if (!loginValues.Username || !loginValues.Password) {
-            setErrorValues({Error: 'Please fill in all fields'});
             return;
         }
 

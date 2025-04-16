@@ -8,7 +8,7 @@ namespace DiscussionForum.Controllers
 {
     
     [ApiController]
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     public class TopicsController : ControllerBase
     {
@@ -27,9 +27,25 @@ namespace DiscussionForum.Controllers
         public async Task<ActionResult<IEnumerable<Topic>>> GetAllTopics()
         {
             try{
-                return await _context.topics.ToListAsync();
+                return await _context.topics.OrderByDescending(t => t.lastupdated).ToListAsync();
             } catch {
                 return BadRequest("Error fetching the topics.");
+            }
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> CreateTopic([FromBody] Topic topic)
+        {
+            try
+            {
+                _context.topics.Add(topic);
+                await _context.SaveChangesAsync();
+                return Ok("Topic created successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest("Error creating topic");
             }
         }
         

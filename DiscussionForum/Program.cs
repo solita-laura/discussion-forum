@@ -22,6 +22,7 @@ builder.Services.AddCors(options =>
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<MessageService>();
 
 //add dbcontext
 builder.Services.AddDbContext<TopicContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));

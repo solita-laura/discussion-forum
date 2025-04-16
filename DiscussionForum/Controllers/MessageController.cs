@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using DiscussionForum.DbEntities;
+using DiscussionForum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,10 @@ namespace DiscussionForum.Controllers
     public class MessageController : ControllerBase
     {
         private readonly MessageContext _context;
-        public MessageController(MessageContext context)
+        private readonly MessageService _messageService;
+        public MessageController(MessageContext context, MessageService messageService)
         {
+            _messageService = messageService;
             _context = context;
         }
 
@@ -38,8 +41,7 @@ namespace DiscussionForum.Controllers
         {
             try
             {
-                _context.messages.Add(message);
-                await _context.SaveChangesAsync();
+                await _messageService.CreateMessage(message);
                 return Ok("message created successfully");
             }
             catch (Exception ex)
