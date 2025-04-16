@@ -1,6 +1,6 @@
 CREATE TABLE topics (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    topicname VARCHAR(100),
+    topicname VARCHAR(20),
     messagecount INT,
     lastupdated TIMESTAMP
 
@@ -24,7 +24,7 @@ CREATE TABLE messages (
     id BIGINT GENERATED ALWAYS AS IDENTITY,
     topicid BIGINT REFERENCES topics(id),
     userid BIGINT REFERENCES users(id),
-    content VARCHAR,
+    content VARCHAR(500),
     upvotes BIGINT DEFAULT 0,
     postdate TIMESTAMP
 );

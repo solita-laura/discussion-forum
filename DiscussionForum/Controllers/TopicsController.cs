@@ -8,7 +8,7 @@ namespace DiscussionForum.Controllers
 {
     
     [ApiController]
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     public class TopicsController : ControllerBase
     {
@@ -32,6 +32,13 @@ namespace DiscussionForum.Controllers
                 return BadRequest("Error fetching the topics.");
             }
         }
+
+        /// <summary>
+        /// post a new topic to the database.
+        /// Required attribute is content
+        /// </summary>
+        /// <param name="topic">Topic</param>
+        /// <returns>status code</returns>
 
         [HttpPost]
         public async Task<ActionResult> CreateTopic([FromBody] Topic topic)

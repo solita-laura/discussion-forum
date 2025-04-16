@@ -21,6 +21,12 @@ namespace DiscussionForum.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Get all messages from database with the specific topic id
+        /// </summary>
+        /// <param name="id">int</param>
+        /// <returns>Message</returns>
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Message>>> GetAllMessages([FromQuery (Name ="topicid")] [Range(0,int.MaxValue)] int id)
         {
@@ -35,6 +41,13 @@ namespace DiscussionForum.Controllers
                 return BadRequest("Error fetching messages");
             }
         }
+
+        /// <summary>
+        /// post a message for the specific topic
+        /// required attributes for message are content, topic id and user id
+        /// </summary>
+        /// <param name="message">Message</param>
+        /// <returns>status code</returns>
 
         [HttpPost]
         public async Task<ActionResult> CreateMessage([FromBody] Message message)
