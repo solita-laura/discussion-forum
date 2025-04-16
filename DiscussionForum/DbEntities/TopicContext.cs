@@ -20,5 +20,5 @@ public class Topic {
     [Required]
     public string? topicname {get; set; }
     public int messagecount {get; set; }
-    public DateTime? lastupdated {get; set; } = null;
+    public DateTime? lastupdated {get; set; } = DateTime.UtcNow;
 }

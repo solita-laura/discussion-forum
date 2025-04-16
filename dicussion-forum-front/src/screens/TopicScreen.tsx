@@ -97,11 +97,10 @@ function TopicScreen() {
 
   return (
     <div className="flex flex-col justify-center">
-      <h1 className="fixed top-0 left-0 uppercase text-shadow-cyan-900 p-2 bg-white w-full">{topicname}</h1>
-      <div className="mt-16">
+      <h1 className="top-0 uppercase text-cyan-900 p-2 w-full">{topicname}</h1>
       {messages ? messages.map((message) => (
-        <div className="p-3" key={message.id}>
-          <div className="border-1 border-cyan-950 rounded-sm p-2 w-2xl text-xs shadow-2xs h-auto">
+        <div key={message.id}>
+          <div>
             <TopicMessage 
               content={message.content}
               upvotes={message.upvotes}
@@ -109,7 +108,6 @@ function TopicScreen() {
           </div>
         </div>
       )) : <h1>No messages found</h1>}
-      </div>
       <div>
           <MessageForm
             message={messageContent.content}

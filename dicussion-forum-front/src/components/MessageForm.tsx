@@ -31,7 +31,7 @@ function MessageForm (props: MessageFieldProps) {
             onInput={props.addMessage}
             onChange={(e => autosizeTextArea(e.target, e.target.value))}
             placeholder="Enter your message..."
-            className="p-2 border-b-2 border-gray-500 w-2/3 text-center"
+            className="p-2 border-2 border-gray-500 w-2/3 text-center"
           />        
           <div>
             <button className="mt-4">Send</button>
