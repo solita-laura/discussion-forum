@@ -13,6 +13,7 @@ function MessageForm (props: MessageFieldProps) {
     textAreaRef: HTMLTextAreaElement | null,
     value: string 
   ) => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
     if (textAreaRef) {
       textAreaRef.style.height = '0px';

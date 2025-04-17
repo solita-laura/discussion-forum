@@ -11,7 +11,11 @@ function Dashboard() {
     lastupdated: Date;
   }
 
-  type newTopic = {
+  type NewTopic = {
+    topicname: string;
+  }
+
+  type TopicName = {
     topicname: string;
   }
 
@@ -20,11 +24,14 @@ function Dashboard() {
   }
 
   const [topics, setTopics] = useState<Topic[]>([]);
-  const [newTopic, setNewTopic] = useState<newTopic>({
+  const [newTopic, setNewTopic] = useState<NewTopic>({
     topicname: '',
   });
   const [error, setError] = useState<Error>({
     errorMessage: '',
+  });
+  const [topicName, setTopicName] = useState<TopicName>({
+    topicname: '',
   });
 
   const navigate = useNavigate();
@@ -54,7 +61,15 @@ function Dashboard() {
       }});
   };
 
-  const createTopic = async () => {
+  const createTopic = async (event: React.FormEvent<HTMLFormElement>) => {
+
+    event.preventDefault();
+
+    if (!RegExp('^[a-zA-Z0-9 ]+$').test(newTopic.topicname)) {
+      setError({ errorMessage: 'Topic name can only contain letters and numbers' });
+      return;
+    } 
+
     await fetch('http://localhost:5055/api/Topics', {
       method: 'POST',
       credentials: 'include',
@@ -65,6 +80,8 @@ function Dashboard() {
     })
       .then(async response => {
         if (response.ok) {
+          setError({ errorMessage: '' });
+          setNewTopic({ topicname: '' });
           getTopics();
         } else {
           switch (response.status) {
@@ -78,22 +95,60 @@ function Dashboard() {
       }});
     }
 
+  const sendTopic = async (event: React.FormEvent<HTMLFormElement>, topicid:number) => {
+    event.preventDefault();
+
+    if (!RegExp('^[a-zA-Z0-9 ]+$').test(topicName.topicname)) {
+      setError({ errorMessage: 'Topic name can only contain letters and numbers' });
+      return;
+    } 
+
+    await fetch('http://localhost:5055/api/Topics?topicid=' + topicid, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(topicName.topicname),
+    })
+      .then(async response => {
+        if (response.ok) {
+          setError({ errorMessage: '' });
+          getTopics();
+        } else {
+          switch (response.status) {
+            case 401:
+              navigate('/login');
+              break;
+            default: 
+              setError({ errorMessage: 'Error creating topic' });
+              break; 
+        }
+      }});
+  }
+
   useEffect(() => {
     getTopics();
   }, []);
 
+  const addTopicName = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTopicName({
+      ...topicName,
+      [event.target.name]: event.target.value
+    });
+  }
+
   return (
     <div className="flex flex-col justify-center">
       <h1 className="top-0 w-full text-cyan-900 uppercase p-2">Topics</h1>
-      <form className="w-full p-8">
+      <form className="w-full p-8" onSubmit={createTopic}>
         <label className="text-cyan-900">{error.errorMessage}</label>
         <input type="text"
           className="p-2 w-2/4 bg-gray-100 text-cyan-950 rounded"
           placeholder="Create a new topic"
           value={newTopic.topicname}
           onChange={(e) => setNewTopic({ ...newTopic, topicname: e.target.value })} />
-      <button className="m-2"
-        onClick={() => createTopic()}>
+      <button className="m-2">
         Submit
       </button>
       </form>
@@ -102,9 +157,13 @@ function Dashboard() {
           className="p-3 hover:cursor-pointer" 
           key={topic.id}>
           <Topic
+            topicid={topic.id}
             topicname={topic.topicname}
             messagecount={topic.messagecount}
-            lastupdated={new Date(topic.lastupdated)}/>
+            lastupdated={new Date(topic.lastupdated)}
+            addTopicName={addTopicName}
+            sendTopicName={sendTopic}
+            />
         </div>
       )): <h1>No topics found</h1>}
     </div>

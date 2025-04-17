@@ -8,7 +8,7 @@ namespace DiscussionForum.Controllers
 {
     
     [ApiController]
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     public class TopicsController : ControllerBase
     {
@@ -53,6 +53,29 @@ namespace DiscussionForum.Controllers
             {
                 Console.WriteLine(ex.Message);
                 return BadRequest("Error creating topic");
+            }
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateTopic([FromQuery(Name ="topicid")] int id, [FromBody] string topicname)
+        {
+
+            try
+            {
+                var topic = await _context.topics.FindAsync(id);
+                if (topic.messagecount != 0)
+                {
+                    return BadRequest("Topic name cannot be updated as it has messages.");
+                }
+
+                topic.topicname = topicname;
+                await _context.SaveChangesAsync();
+
+                return Ok("Topic updated successfully");
+            }
+            catch
+            {
+                return BadRequest("Error updating topic.");
             }
         }
         

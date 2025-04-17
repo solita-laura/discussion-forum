@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import Form from '../components/Form';
-import { resolveConfig } from 'vite';
 import { useNavigate } from 'react-router-dom';
 
 function LoginScreen(){
@@ -52,19 +51,9 @@ function LoginScreen(){
                 setErrorValues({Error: ''});
                 navigate('/dashboard');
             } else {
-                console.log(response.status);
-                switch (response.status) {
-                    case 404:
-                        setErrorValues({ Error: "Username not found" });
-                        break;
-                    case 401:
-                        setErrorValues({ Error: "Incorrect password" });
-                        break;
-                    default:
-                        setErrorValues({ Error: "Error login in. Please try again" });
-                        break;
+                setErrorValues({ Error: "Incorrect password or username." });
             }
-        }})
+        })
      }
 
     return (
