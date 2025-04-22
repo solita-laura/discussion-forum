@@ -1,4 +1,6 @@
 using System.Net;
+using System.Net.Http.Json;
+using DiscussionForum.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
 
 public class TopicController_UnitTests 
@@ -33,4 +35,22 @@ public class TopicController_UnitTests
 
 
     }
+
+    /// <summary>
+    /// test updating topic when message count is not zero.
+    /// The test should fail.
+    /// </summary>
+
+    [Test]
+    public async Task UpdateTopic_MessagecountNotZero ()
+    {
+        var factory = new WebApplicationFactory<Program>();
+        var client = factory.CreateClient();
+
+        var response = await client.PutAsync("/api/Topics?topicid=1", new StringContent("modified name", System.Text.Encoding.UTF8, "application/json"));
+        Assert.That(HttpStatusCode.BadRequest, Is.EqualTo(response.StatusCode));
+
+    }
+
+
 }

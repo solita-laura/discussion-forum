@@ -7,6 +7,11 @@ using Moq.EntityFrameworkCore;
 
 public class MessageService_UnitTests {
 
+    /// <summary>
+    /// Test creating a message.
+    /// The message should be created successfully.
+    /// </summary>
+
     [Test]
     public async Task CreateMessage_Success()
     {
@@ -46,6 +51,38 @@ public class MessageService_UnitTests {
 
         Assert.That(updatedTopic.messagecount, Is.EqualTo(1));
         Assert.That(updatedTopic.lastupdated, Is.EqualTo(DateTime.UtcNow).Within(TimeSpan.FromSeconds(1)));
+
+    }
+
+    /// <summary>
+    /// test deleting messages with a specific topic id.
+    /// </summary>
+
+    [Test]
+    public async Task DeleteMessages_Success()
+    {
+        var msgContextMock = new Mock<MessageContext>();
+        var topicContextMock = new Mock<TopicContext>();
+
+        var msgData = new List<Message>
+        {
+            new Message{ id=1, topicid=1, userid=1, content="some content"},
+            new Message{ id=2, topicid=1, userid=2, content="some other content"}
+        };
+
+        msgContextMock.Setup(m => m.messages)
+                        .ReturnsDbSet(msgData);
+        
+        msgContextMock.Setup(m => m.SaveChangesAsync(default))
+                  .ReturnsAsync(2);
+
+        var msgService = new MessageService(msgContextMock.Object, topicContextMock.Object);
+
+        var response = await msgService.DeleteMessage(1);
+        Assert.That(response, Is.TypeOf(typeof(OkObjectResult)));
+
+        msgContextMock.Verify(m => m.messages.RemoveRange(It.IsAny<IEnumerable<Message>>()), Times.Once);
+       
 
     }
 

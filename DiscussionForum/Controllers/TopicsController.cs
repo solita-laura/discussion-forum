@@ -1,5 +1,6 @@
 using System.Net;
 using DiscussionForum.Models;
+using DiscussionForum.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,11 @@ namespace DiscussionForum.Controllers
     public class TopicsController : ControllerBase
     {
         private readonly TopicContext _context;
+        private readonly MessageService _messageService;
 
-        public TopicsController (TopicContext context){
+        public TopicsController (TopicContext context, MessageService messageService){
             _context = context;
+            _messageService = messageService;
         }
 
         /// <summary>
@@ -56,6 +59,13 @@ namespace DiscussionForum.Controllers
             }
         }
 
+        /// <summary>
+        /// update the name of the topic if message count is 0
+        /// </summary>
+        /// <param name="id">int</param>
+        /// <param name="topicname">string</param>
+        /// <returns>status code</returns>
+
         [HttpPut]
         public async Task<ActionResult> UpdateTopic([FromQuery(Name ="topicid")] int id, [FromBody] string topicname)
         {
@@ -63,6 +73,8 @@ namespace DiscussionForum.Controllers
             try
             {
                 var topic = await _context.topics.FindAsync(id);
+
+                //topic name can only be updated if the message count is 0
                 if (topic.messagecount != 0)
                 {
                     return BadRequest("Topic name cannot be updated as it has messages.");
@@ -76,6 +88,37 @@ namespace DiscussionForum.Controllers
             catch
             {
                 return BadRequest("Error updating topic.");
+            }
+        }
+
+        /// <summary>
+        /// delete the topic
+        /// </summary>
+        /// <param name="id">int</param>
+        /// <returns>status code</returns>
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteTopic([FromQuery(Name = "topicid")] int id)
+        {
+            try
+            {
+                var topic = await _context.topics.FindAsync(id);
+
+                //delete the messages first
+                if (topic.messagecount != 0)
+                {
+                    await _messageService.DeleteMessage(id);
+                }
+
+                _context.topics.Remove(topic);
+                await _context.SaveChangesAsync();
+
+                return Ok("Topic deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest("Error deleting topic");
             }
         }
         
