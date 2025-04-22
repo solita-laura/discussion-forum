@@ -1,5 +1,6 @@
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverTwoToneIcon from '@mui/icons-material/DeleteForeverTwoTone';
 import { useState } from 'react';
 
 type TopicProps = {
@@ -9,6 +10,7 @@ type TopicProps = {
   lastupdated: Date;
   addTopicName: (event: React.ChangeEvent<HTMLInputElement>) => void;
   sendTopicName: (event: React.FormEvent<HTMLFormElement>, topicid:number) => void;
+  deleteTopic: (event: React.MouseEvent, topicid: number) => void;
 }
 
 function Topic(props: TopicProps) {
@@ -25,8 +27,14 @@ function Topic(props: TopicProps) {
     setIsEditing(false);
   };
 
+  const handleDeleteClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    props.deleteTopic(event, props.topicid);
+  };
+
   return (
     <div className="border-2 border-b-neutral-950 p-1 w-2xl text-xs">
+      <DeleteForeverTwoToneIcon onClick={handleDeleteClick}/>
       {props.messagecount == 0 && isEditing ? (
         <form className="p-8 text-xl" onSubmit={handleSubmitForm}>
           <input

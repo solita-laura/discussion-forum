@@ -127,6 +127,33 @@ function Dashboard() {
       }});
   }
 
+  const deleteTopic = async (event: React.MouseEvent, topicid:number) => {
+    event.preventDefault();
+    await fetch('http://localhost:5055/api/Topics?topicid=' + topicid, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(async response => {
+        if (response.ok) {
+          setError({ errorMessage: '' });
+          getTopics();
+        } else {
+          switch (response.status) {
+            case 401:
+              navigate('/login');
+              break;
+            default: 
+              setError({ errorMessage: 'Error deleting topic' });
+              break; 
+        }
+      }});
+  }
+
+
+
   useEffect(() => {
     getTopics();
   }, []);
@@ -163,6 +190,7 @@ function Dashboard() {
             lastupdated={new Date(topic.lastupdated)}
             addTopicName={addTopicName}
             sendTopicName={sendTopic}
+            deleteTopic={deleteTopic}
             />
         </div>
       )): <h1>No topics found</h1>}
