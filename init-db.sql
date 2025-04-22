@@ -6,19 +6,17 @@ CREATE TABLE topics (
 
 );
 
-INSERT INTO topics (topicname, messagecount, lastupdated)
-VALUES ('topic1', 0, '2025-03-03 12:00:00'),
-        ('topic2', 0, '2025-01-04 16:00:00');
-
 CREATE TABLE Users (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     username VARCHAR(100),
     password VARCHAR,
-    salt VARCHAR
+    salt VARCHAR,
+    role VARCHAR(20) DEFAULT 'user'
 );
 
 INSERT INTO users (username, password, salt)
-VALUES ('user1', 'eVxgcavKFAURRQ7z70Y+GWFWjJJla2Pb7qgG97sSXMnHtaxpUgYa7p4DQyz0AyMY', 'J6/zykNVdALI4kdjZrhEWA==');
+VALUES ('user1', 'eVxgcavKFAURRQ7z70Y+GWFWjJJla2Pb7qgG97sSXMnHtaxpUgYa7p4DQyz0AyMY', 'J6/zykNVdALI4kdjZrhEWA=='),
+ ('user2', 'eVxgcavKFAURRQ7z70Y+GWFWjJJla2Pb7qgG97sSXMnHtaxpUgYa7p4DQyz0AyMY', 'J6/zykNVdALI4kdjZrhEWA==');
 
 CREATE TABLE messages (
     id BIGINT GENERATED ALWAYS AS IDENTITY,

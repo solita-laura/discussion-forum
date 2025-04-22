@@ -21,6 +21,11 @@ namespace DiscussionForum.Controllers
             _context = context;
         }
 
+        protected int GetUserId ()
+        {
+            return int.Parse(User.Claims.FirstOrDefault(c => c.Type == "userid")?.Value ?? "0");
+        }
+
         /// <summary>
         /// Get all messages from database with the specific topic id
         /// </summary>
@@ -54,6 +59,8 @@ namespace DiscussionForum.Controllers
         {
             try
             {
+                var id = GetUserId();
+                message.userid = id;
                 await _messageService.CreateMessage(message);
                 return Ok("message created successfully");
             }
@@ -61,6 +68,35 @@ namespace DiscussionForum.Controllers
             {
                 Console.WriteLine(ex.Message);
                 return BadRequest("Error creating message");
+            }
+        }
+
+        /// <summary>
+        /// update the message if the user has created it themselves
+        /// </summary>
+        /// <param name="message">Message</param>
+        /// <returns>Status code</returns>
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateMessage([FromQuery(Name = "messageid")] int messageid, [FromBody] string messagecontent)
+        {
+            try
+            {
+                var id = GetUserId();
+                var msg = await _context.messages.FirstOrDefaultAsync(m => m.id == messageid);
+
+                if(msg.userid != id)
+                {
+                    return Unauthorized("You are not authorized to update this message");
+                }
+
+                msg.content = messagecontent;
+                await _context.SaveChangesAsync();
+                return Ok("message updated successfully");
+            }
+            catch
+            {
+                return BadRequest("Error updating message");
             }
         }
 

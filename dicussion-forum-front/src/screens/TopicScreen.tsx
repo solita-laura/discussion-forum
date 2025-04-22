@@ -16,6 +16,7 @@ function TopicScreen() {
       content: string;
       upvotes: number;
       postdate: Date;
+      userid: number;
     }
 
     type Error = {
@@ -26,9 +27,14 @@ function TopicScreen() {
       content: string;
     }
 
+    type updateMessage = {
+      updatedcontent: string;
+    }
+
     const [messages, setMessages] = useState<Message[]>([]);
     const [error, setError] = useState<Error>({errorMessage: ''});
     const [messageContent, setMessageContent] = useState<messageContent>({content: ''});
+    const [updateMessage, setUpdateMessage] = useState<updateMessage>({updatedcontent: ''});
 
     const getMessages = async () => {
       await fetch('http://localhost:5055/api/Topics/Message?topicid=' + topicId, {
@@ -69,7 +75,6 @@ function TopicScreen() {
         },
         body: JSON.stringify({
           topicid: topicId,
-          userid: 1, //for testing purposes
           content: messageContent.content,
         }),
       })
@@ -84,11 +89,47 @@ function TopicScreen() {
       );
     };
 
+    const sendMessageUpdate = async (event: React.FormEvent<HTMLFormElement>, messageid: number) => {
+      
+      event.preventDefault();
+
+      if(!updateMessage.updatedcontent) {
+        return;
+      }
+      
+      await fetch('http://localhost:5055/api/Topics/Message?messageid=' + messageid, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateMessage.updatedcontent),
+      })
+        .then(async response => {
+          if (response.ok) {
+            setError({errorMessage: ''});
+            setUpdateMessage({updatedcontent: ''});
+            getMessages();
+          } else {
+              setError({ errorMessage: "Error updating message" });
+            }
+        }
+      );
+    } 
+
+
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
       setMessageContent({
         ...messageContent,
         [event.target.name]: event.target.value
       });
+    }
+
+    const updateMessageContent = async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setUpdateMessage({
+        ...updateMessage,
+        [event.target.name]: event.target.value
+      })
     }
 
     useEffect(() => {
@@ -99,12 +140,19 @@ function TopicScreen() {
     <div className="flex flex-col justify-center">
       <h1 className="top-0 uppercase text-cyan-900 p-2 w-full">{topicname}</h1>
       {messages ? messages.map((message) => (
-        <div key={message.id}>
+        <div key={message.id} onLoad={() => setUpdateMessage({updatedcontent: message.content})}>
           <div>
             <TopicMessage 
               content={message.content}
               upvotes={message.upvotes}
-              postdate = {new Date(message.postdate)}/>
+              postdate = {new Date(message.postdate)}
+              userid = {message.userid}
+              messageid={message.id}
+              sendUpdatedMessage={sendMessageUpdate}
+              updateMessageContent={updateMessageContent}
+              updateContent={updateMessage.updatedcontent}
+              setInitialContent={setUpdateMessage}
+              />
           </div>
         </div>
       )) : <h1>No messages found</h1>}

@@ -9,7 +9,7 @@ namespace DiscussionForum.Controllers
 {
     
     [ApiController]
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     public class TopicsController : ControllerBase
     {

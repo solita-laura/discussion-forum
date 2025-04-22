@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import Topic from "../components/Topic";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Dashboard present all the topics created to the discussion forum
+ * @returns 
+ */
+
+
 function Dashboard() {
 
   type Topic = {
@@ -36,7 +42,12 @@ function Dashboard() {
 
   const navigate = useNavigate();
 
+  /**
+   * Fetches all the topics from the API
+   */
   const getTopics = async () => {
+
+    try{
     await fetch('http://localhost:5055/api/Topics', {
       method: 'GET',
       credentials: 'include',
@@ -46,19 +57,22 @@ function Dashboard() {
     })
       .then(async response => {
         if (response.ok) {
-          console.log(response);
+          setError({ errorMessage: '' });
           setTopics(await response.json());
-          console.log(topics);
         } else {
           switch (response.status) {
             case 401:
               navigate('/login');
               break;
             default: 
+              setError({ errorMessage: 'Error fetching topics' });
               setTopics([]);
               break; 
         }
       }});
+    } catch {
+      setError({ errorMessage: 'Error fetching topics' });
+    }
   };
 
   const createTopic = async (event: React.FormEvent<HTMLFormElement>) => {

@@ -47,7 +47,9 @@ function LoginScreen(){
         })
         .then(response => {
             if (response.ok) {
-                console.log(response);
+                sessionStorage.setItem('role', response.headers.get('role') || '');
+                sessionStorage.setItem('id', response.headers.get('id') || '');
+
                 setErrorValues({Error: ''});
                 navigate('/dashboard');
             } else {

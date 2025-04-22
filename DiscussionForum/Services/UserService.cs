@@ -26,7 +26,7 @@ public class UserService
     /// <returns>Task<string></returns>
     /// <exception cref="Exception"></exception>
 
-    public async Task<string> Login (LoginRequest loginRequest){
+    public async Task<LoginResponse> Login (LoginRequest loginRequest){
 
         try{
             var user = _context.users.FirstOrDefault(u => u.username.Equals(loginRequest.Username));
@@ -42,8 +42,14 @@ public class UserService
 
             if(loginRequest.Password.Equals(pass))
             {
-                var token = GenerateJwtToken(user.username);
-                return token;
+                var token = GenerateJwtToken(user.username, user.id);
+                var loginResponse = new LoginResponse
+                {
+                    Token = token,
+                    Role = user.role,
+                    Id = user.id
+                };
+                return loginResponse;
             }
 
             throw new InvalidPasswordException("Invalid password."); 
@@ -170,12 +176,13 @@ public class UserService
     /// </summary>
     /// <param name="username">string</param>
     /// <returns>string</returns>
-    private string GenerateJwtToken(string username)
+    private string GenerateJwtToken(string username, int? id)
     {
         try{
             var claims = new []
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, username),
+                    new Claim("userid", id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
 

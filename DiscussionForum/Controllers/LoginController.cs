@@ -38,7 +38,10 @@ namespace DiscussionForum.Controllers
                     Expires = DateTimeOffset.UtcNow.AddHours(2)
                 };
 
-                Response.Cookies.Append("token", response, cookieOptions);
+                Response.Cookies.Append("token", response.Token, cookieOptions);
+                Response.Headers.Append("role", response.Role);
+                Response.Headers.Append("id", response.Id.ToString());
+                
                 return Ok();
             }catch (UserNotFoundException ex){
                 return NotFound(ex.Message);  
