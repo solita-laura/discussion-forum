@@ -7,6 +7,12 @@ type LoginFieldProps = {
     error: string
 }
 
+/**
+ * Form component for the login screen
+ * @param props Props for the form
+ * @returns Form component
+ */
+
 function Form(props: LoginFieldProps) {
     return (
         <main className="p-4 items-center">

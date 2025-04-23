@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 /**
  * Dashboard present all the topics created to the discussion forum
- * @returns 
  */
 
 
@@ -21,8 +20,8 @@ function Dashboard() {
     topicname: string;
   }
 
-  type TopicName = {
-    topicname: string;
+  type UpdateTopicName = {
+    updateTopicName: string;
   }
 
   type Error = {
@@ -36,8 +35,8 @@ function Dashboard() {
   const [error, setError] = useState<Error>({
     errorMessage: '',
   });
-  const [topicName, setTopicName] = useState<TopicName>({
-    topicname: '',
+  const [updateTopicName, setUpdateTopicName] = useState<UpdateTopicName>({
+    updateTopicName: '',
   });
 
   const navigate = useNavigate();
@@ -48,13 +47,13 @@ function Dashboard() {
   const getTopics = async () => {
 
     try{
-    await fetch('http://localhost:5055/api/Topics', {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
+      await fetch('http://localhost:5055/api/Topics', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
       .then(async response => {
         if (response.ok) {
           setError({ errorMessage: '' });
@@ -68,30 +67,38 @@ function Dashboard() {
               setError({ errorMessage: 'Error fetching topics' });
               setTopics([]);
               break; 
+          }
         }
-      }});
-    } catch {
+      });
+    }catch{
       setError({ errorMessage: 'Error fetching topics' });
     }
   };
+
+  /**
+   * Create a new topic
+   * @param event FormEvent
+   */
 
   const createTopic = async (event: React.FormEvent<HTMLFormElement>) => {
 
     event.preventDefault();
 
-    if (!RegExp('^[a-zA-Z0-9 ]+$').test(newTopic.topicname)) {
+    // Check that the topic name follows the rules (only numbers and letters)
+    if (!checkTopicName(newTopic.topicname)) {
       setError({ errorMessage: 'Topic name can only contain letters and numbers' });
       return;
     } 
 
-    await fetch('http://localhost:5055/api/Topics', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newTopic),
-    })
+    try{
+      await fetch('http://localhost:5055/api/Topics', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newTopic),
+      })
       .then(async response => {
         if (response.ok) {
           setError({ errorMessage: '' });
@@ -105,26 +112,37 @@ function Dashboard() {
             default: 
               setError({ errorMessage: 'Error creating topic' });
               break; 
+          } 
         }
-      }});
+      });
+    }catch{
+      setError({ errorMessage: 'Error creating topic' });
     }
+  }
 
-  const sendTopic = async (event: React.FormEvent<HTMLFormElement>, topicid:number) => {
+  /**
+   * Update the topic name
+   * @param event FormEvent
+   * @param topicid number
+   */
+
+  const sendUpdatedName = async (event: React.FormEvent<HTMLFormElement>, topicid:number) => {
     event.preventDefault();
 
-    if (!RegExp('^[a-zA-Z0-9 ]+$').test(topicName.topicname)) {
-      setError({ errorMessage: 'Topic name can only contain letters and numbers' });
+    if (!checkTopicName(updateTopicName.updateTopicName)) {
+      setError({ errorMessage: 'Topic name can only contain letters, numbers and white spaces' });
       return;
     } 
 
-    await fetch('http://localhost:5055/api/Topics?topicid=' + topicid, {
-      method: 'PUT',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(topicName.topicname),
-    })
+    try{
+      await fetch('http://localhost:5055/api/Topics?topicid=' + topicid, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateTopicName.updateTopicName),
+      })
       .then(async response => {
         if (response.ok) {
           setError({ errorMessage: '' });
@@ -135,21 +153,33 @@ function Dashboard() {
               navigate('/login');
               break;
             default: 
-              setError({ errorMessage: 'Error creating topic' });
+              setError({ errorMessage: 'Error updating the topic name' });
               break; 
-        }
-      }});
+          }
+      }
+    });
+    } catch {
+      setError({errorMessage: 'Error updating topic name'});
+    }
   }
+
+  /**
+   * Delete a topic
+   * @param event MouseEvent
+   * @param topicid number
+   */
 
   const deleteTopic = async (event: React.MouseEvent, topicid:number) => {
     event.preventDefault();
-    await fetch('http://localhost:5055/api/Topics?topicid=' + topicid, {
-      method: 'DELETE',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
+
+    try{
+      await fetch('http://localhost:5055/api/Topics?topicid=' + topicid, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
       .then(async response => {
         if (response.ok) {
           setError({ errorMessage: '' });
@@ -162,19 +192,39 @@ function Dashboard() {
             default: 
               setError({ errorMessage: 'Error deleting topic' });
               break; 
+          }
         }
-      }});
+      });
+    } catch {
+      setError({errorMessage: 'Error deleting topic'})
+    }
   }
 
+  /**
+   * check topic name 
+   * @returns boolean
+   */
 
+  const checkTopicName = (nameToValidate: string): boolean => {
+    return RegExp('^[a-zA-Z0-9 ]+$').test(nameToValidate);
+  }
+
+  /**
+   * load topics
+   */
 
   useEffect(() => {
     getTopics();
   }, []);
 
+  /**
+   * Add topic name
+   * @param event ChangeEvent
+   */
+
   const addTopicName = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTopicName({
-      ...topicName,
+    setUpdateTopicName({
+      ...updateTopicName,
       [event.target.name]: event.target.value
     });
   }
@@ -183,9 +233,9 @@ function Dashboard() {
     <div className="flex flex-col justify-center">
       <h1 className="top-0 w-full text-cyan-900 uppercase p-2">Topics</h1>
       <form className="w-full p-8" onSubmit={createTopic}>
-        <label className="text-cyan-900">{error.errorMessage}</label>
+        <label className="text-cyan-900 flex justify-center">{error.errorMessage}</label>
         <input type="text"
-          className="p-2 w-2/4 bg-gray-100 text-cyan-950 rounded"
+          className="p-2 w-fit bg-gray-100 text-cyan-950 rounded"
           placeholder="Create a new topic"
           value={newTopic.topicname}
           onChange={(e) => setNewTopic({ ...newTopic, topicname: e.target.value })} />
@@ -203,7 +253,7 @@ function Dashboard() {
             messagecount={topic.messagecount}
             lastupdated={new Date(topic.lastupdated)}
             addTopicName={addTopicName}
-            sendTopicName={sendTopic}
+            sendTopicName={sendUpdatedName}
             deleteTopic={deleteTopic}
             />
         </div>

@@ -2,26 +2,30 @@ import React, {useState} from 'react';
 import Form from '../components/Form';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * Login the user to the discussion forum
+ */
+
 function LoginScreen(){
 
     type loginValues = {
         Username: string;
         Password: string;
     }
-
-    type errorValues = {
-        Error: string;
-    }
-
-    const navigate = useNavigate();
+    type errorValues = { Error: string;}
 
     const [loginValues, setLoginValues] = useState<loginValues>({
         Username: '',
         Password: ''
     });
-
     const [errorValues, setErrorValues] = useState<errorValues>({Error: '' });
 
+    const navigate = useNavigate();
+
+    /**
+     * set the login values on change
+     * @param event ChangeEvent
+     */
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setLoginValues({
             ...loginValues,
@@ -29,33 +33,41 @@ function LoginScreen(){
         });
     }
     
-
+    /**
+     * Login the user to the discussion forum
+     * @param event FormEvent
+     */
     const loginUser = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+        //Dont continue with empty username or password
         if (!loginValues.Username || !loginValues.Password) {
             return;
         }
 
-        await fetch('http://localhost:5055/api/Login', {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },         
-            body: JSON.stringify({ Username: loginValues.Username, Password: loginValues.Password }),
-        })
-        .then(response => {
-            if (response.ok) {
-                sessionStorage.setItem('role', response.headers.get('role') || '');
-                sessionStorage.setItem('id', response.headers.get('id') || '');
+        try{
+            await fetch('http://localhost:5055/api/Login', {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },         
+                body: JSON.stringify({ Username: loginValues.Username, Password: loginValues.Password }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    sessionStorage.setItem('role', response.headers.get('role') || '');
+                    sessionStorage.setItem('id', response.headers.get('id') || '');
 
-                setErrorValues({Error: ''});
-                navigate('/dashboard');
-            } else {
-                setErrorValues({ Error: "Incorrect password or username." });
-            }
-        })
+                    setErrorValues({Error: ''});
+                    navigate('/dashboard');
+                } else {
+                    setErrorValues({ Error: "Incorrect password or username." });
+                }
+            });
+        }catch{
+            setErrorValues({ Error: "Error logging in." });
+        };
      }
 
     return (

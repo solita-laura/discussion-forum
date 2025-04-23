@@ -7,8 +7,14 @@ type MessageFieldProps = {
   error: string;
 }
 
+/**
+ * Form to send a message to the topic
+ * @param props Props for the form
+ * @returns MessageForm
+ */
 function MessageForm (props: MessageFieldProps) {
 
+  // Function to autosize the text area
   const autosizeTextArea = (
     textAreaRef: HTMLTextAreaElement | null,
     value: string 
@@ -23,8 +29,8 @@ function MessageForm (props: MessageFieldProps) {
 }
 
   return (
-    <div className="h-auto">
-      <form onSubmit={props.sendMessage}>
+    <div>
+      <form onSubmit={props.sendMessage} className="w-full flex justify-center flex-col p-5">
         <label className="text-sm font-bold">{props.error}</label>
           <textarea
             name="content"
@@ -32,7 +38,7 @@ function MessageForm (props: MessageFieldProps) {
             onInput={props.addMessage}
             onChange={(e => autosizeTextArea(e.target, e.target.value))}
             placeholder="Enter your message..."
-            className="p-2 border-2 border-gray-500 w-2/3 text-center"
+            className="text-center"
           />        
           <div>
             <button className="mt-4">Send</button>

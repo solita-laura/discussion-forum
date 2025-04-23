@@ -14,17 +14,31 @@ type MessageProps = {
   setInitialContent: React.Dispatch<React.SetStateAction<{updatedcontent: string}>>;
 };
 
+/**
+ * Display the message in the topic
+ * @param props Props for the message
+ * @returns TopicMessage component
+ */
 function TopicMessage (props: MessageProps) {
 
   const sessionuserid = sessionStorage.getItem('id'); 
   const [isEditing, setIsEditing] = useState(false);
 
+  /**
+   * stop further propagations of the event and toggle the edit mode 
+   * and set the current content as base before editing the message
+   * @param event MouseEvent
+   */
   const handleEditClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     props.setInitialContent({updatedcontent: props.content});
     setIsEditing(!isEditing);
   }
 
+  /**
+   * Submit the updated message
+   * @param event FormEvent
+   */
   const handleSubmitMessage = (event: React.FormEvent<HTMLFormElement>) => {
     console.log("checkpoint 0");
     props.sendUpdatedMessage(event, props.messageid);
@@ -32,36 +46,40 @@ function TopicMessage (props: MessageProps) {
   };
 
   return (
-    <div className="border-2 border-b-neutral-950 p-1 w-2xl text-xs m-2">
+    <div className="p-5">
       {isEditing ? (
+      //* display the editing form if editing is clicked *//
       <div>
-      <form className="p-8 text-xl" onSubmit={handleSubmitMessage}>
-      <textarea
-        name="updatedcontent"
-        value={props.updateContent}
-        onInput={props.updateMessageContent}
-        onClick={event => event.stopPropagation()}
-        className="p-2 border-2 border-gray-500 w-2/3 text-center"
-      /> 
-      <div>
-        <button>Send</button>
-      </div>
-      </form>
+        <form className="p-8 text-xl" onSubmit={handleSubmitMessage}>
+          <textarea
+            name="updatedcontent"
+            value={props.updateContent}
+            onInput={props.updateMessageContent}
+            onClick={event => event.stopPropagation()}
+            className="p-2 border-2 border-gray-500 w-2/3 text-center"
+          /> 
+          <div>
+            <button>Send</button>
+          </div>
+        </form>
       </div>
       ):( 
       <p className="border-b-1 p-5">{props.content}</p>
       )}
       <div className="inline-flex items-center space-x-5 p-2">
         <div className='inline-flex space-x-1 items-center'>
-        <FavoriteBorderIcon />
-        <p className="text-xs">{props.upvotes}</p>
-        <p className="text-xs">{props.postdate.toLocaleDateString()}</p>
+          <FavoriteBorderIcon />
+          <p className="text-xs">{props.upvotes}</p>
+          <p className="text-xs">{props.postdate.toLocaleDateString()}</p>
         </div>
-        {sessionuserid == props.userid.toString()? (
-          <EditIcon className="cursor-pointer" onClick={handleEditClick}/>
-        ) : ( null )}
-        </div>
-    </div>
+      {sessionuserid == props.userid.toString()? (
+        /* display the edit icon if the user is the owner of the message */
+        <EditIcon className="cursor-pointer" onClick={handleEditClick}/>
+      ):( 
+        null
+      )}
+      </div>
+   </div>
   );
 }
 export default TopicMessage;
