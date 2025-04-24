@@ -3,7 +3,7 @@ name: Docker Image CI
 on:
   push:
     branches:
-      - "docker-pipeline-test"
+      - "main"
   workflow_dispatch:
 env:
   IMAGE_REGISTRY: "docker.io"
