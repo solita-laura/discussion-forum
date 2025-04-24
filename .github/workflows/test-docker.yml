@@ -1,0 +1,28 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches:
+      - "docker-pipeline-test"
+  workflow_dispatch:
+env:
+  IMAGE_REGISTRY: "docker.io"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
+    - uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d
+      name: Log into docker
+      with:
+        registry: ${{ env.IMAGE_REGISTRY }}
+        username: ${{ secrets.DOCKER_USRNAME }}
+        password: ${{ secrets.DOCKER_PWD }}
+      
+    - name: Publish docker image
+      uses: 0x4r45h/docker-compose-ci@v0.1.0
