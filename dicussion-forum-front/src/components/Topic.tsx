@@ -8,6 +8,7 @@ type TopicProps = {
   topicname: string;
   messagecount: number;
   lastupdated: Date;
+  userid: number;
   addTopicName: (event: React.ChangeEvent<HTMLInputElement>) => void;
   sendTopicName: (event: React.FormEvent<HTMLFormElement>, topicid:number) => void;
   deleteTopic: (event: React.MouseEvent, topicid: number) => void;
@@ -21,6 +22,7 @@ type TopicProps = {
 
 function Topic(props: TopicProps) {
 
+  const sessionuserid = sessionStorage.getItem('id');
   const [isEditing, setIsEditing] = useState(false);
 
   /**
@@ -53,7 +55,8 @@ function Topic(props: TopicProps) {
   return (
     <div className='border-2 w-3xl border-b-cyan-900'>
       <div className='p-1'>
-      <DeleteForeverTwoToneIcon onClick={handleDeleteClick}/>
+      {sessionuserid == props.userid.toString() ? (
+      <DeleteForeverTwoToneIcon onClick={handleDeleteClick}/>):(null)}
       </div>
       {props.messagecount == 0 && isEditing ? (
         //* display the editing form if editing is clicked *//
@@ -70,7 +73,7 @@ function Topic(props: TopicProps) {
         </form> 
         </div>
       //* If no messages and not editing, display the topic name with edit icon *//
-      ) : props.messagecount == 0 && !isEditing ? (
+      ) : props.messagecount == 0 && !isEditing && sessionuserid==props.userid.toString()? (
       <div className='border-b-1 border-b-neutral-400 inline-flex w-full justify-center items-center space-x-3 p-5'>
         <h1 className="uppercase text-amber-800">{props.topicname}</h1>
         <EditIcon onClick={handleEditClick}/>

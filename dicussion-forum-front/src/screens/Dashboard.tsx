@@ -14,6 +14,7 @@ function Dashboard() {
     topicname: string;
     messagecount: number;
     lastupdated: Date;
+    userid: number;
   }
 
   type NewTopic = {
@@ -258,6 +259,7 @@ function Dashboard() {
             topicname={topic.topicname}
             messagecount={topic.messagecount}
             lastupdated={new Date(topic.lastupdated)}
+            userid={topic.userid}
             addTopicName={addTopicName}
             sendTopicName={sendUpdatedName}
             deleteTopic={deleteTopic}

@@ -24,5 +24,8 @@ public class Topic {
     [StringLength(20, ErrorMessage = "Topic name cannot be longer than 20 characters.")]
     public string? topicname {get; set; }
     public int messagecount {get; set; }
+
+    [Required]
+    public int userid {get; set; }
     public DateTime? lastupdated {get; set; } = DateTime.UtcNow;
 }

@@ -21,6 +21,11 @@ namespace DiscussionForum.Controllers
             _messageService = messageService;
         }
 
+        protected int GetUserId ()
+        {
+            return int.Parse(User.Claims.FirstOrDefault(c => c.Type == "userid")?.Value ?? "0");
+        }
+
         /// <summary>
         /// Get all topics
         /// </summary>
@@ -48,6 +53,8 @@ namespace DiscussionForum.Controllers
         {
             try
             {
+                var id = GetUserId();
+                topic.userid = id;
                 _context.topics.Add(topic);
                 await _context.SaveChangesAsync();
                 return Ok("Topic created successfully");
@@ -80,6 +87,12 @@ namespace DiscussionForum.Controllers
                     return BadRequest("Topic name cannot be updated as it has messages.");
                 }
 
+                var userid = GetUserId();
+                if (topic.userid != userid)
+                {
+                    return BadRequest("You are not authorized to update this topic.");
+                }
+
                 topic.topicname = topicname;
                 await _context.SaveChangesAsync();
 
@@ -103,6 +116,12 @@ namespace DiscussionForum.Controllers
             try
             {
                 var topic = await _context.topics.FindAsync(id);
+
+                var userid = GetUserId();
+                if (topic.userid != userid)
+                {
+                    return BadRequest("You are not authorized to delete this topic.");
+                }
 
                 //delete the messages first
                 if (topic.messagecount != 0)

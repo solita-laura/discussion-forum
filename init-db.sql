@@ -1,11 +1,3 @@
-CREATE TABLE topics (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    topicname VARCHAR(20),
-    messagecount INT,
-    lastupdated TIMESTAMP
-
-);
-
 CREATE TABLE Users (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     username VARCHAR(100),
@@ -13,6 +5,16 @@ CREATE TABLE Users (
     salt VARCHAR,
     role VARCHAR(20) DEFAULT 'user'
 );
+
+CREATE TABLE topics (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    topicname VARCHAR(20),
+    messagecount INT,
+    lastupdated TIMESTAMP,
+    userid BIGINT REFERENCES users(id)
+
+);
+
 
 INSERT INTO users (username, password, salt)
 VALUES ('user1', 'eVxgcavKFAURRQ7z70Y+GWFWjJJla2Pb7qgG97sSXMnHtaxpUgYa7p4DQyz0AyMY', 'J6/zykNVdALI4kdjZrhEWA=='),
