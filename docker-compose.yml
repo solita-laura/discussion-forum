@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres
+    image: laurapihamaa623/discussion-forum:database
     restart: always
     environment: 
       POSTGRES_USER: admin1
@@ -13,11 +13,10 @@ services:
       - 5432:5432
   adminer:
     restart: always
-    image: adminer
     ports:
       - 8088:8080
   backend:
-    image: "docker.io/laurapihamaa623/discussion-forum/backend:latest"
+    image: laurapihamaa623/discussion-forum:backend
     build:
       context: ./DiscussionForum
       dockerfile: Dockerfile
@@ -27,7 +26,7 @@ services:
     depends_on:
       - db
   frontend:
-    image: "docker.io/laurapihamaa623/discussion-forum/frontend:latest"
+    image: laurapihamaa623/discussion-forum:frontend
     build:
       context: ./dicussion-forum-front
       dockerfile: Dockerfile
