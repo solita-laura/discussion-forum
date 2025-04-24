@@ -103,6 +103,7 @@ function TopicScreen() {
         })
         .then(async response => {
           if (response.ok) {
+            setError({errorMessage: ''});
             setMessageContent({content: ''});
             getMessages();
           } else {

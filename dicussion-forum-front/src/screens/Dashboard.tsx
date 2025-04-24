@@ -84,11 +84,17 @@ function Dashboard() {
 
     event.preventDefault();
 
+    //Check that the topic name is less than 20 characters and more than 0
+    if (newTopic.topicname.length > 20 || newTopic.topicname.length < 1) {
+      setError({ errorMessage: 'Topic name must be between 1 and 20 characters.' });
+      return;
+    }
+
     // Check that the topic name follows the rules (only numbers and letters)
     if (!checkTopicName(newTopic.topicname)) {
-      setError({ errorMessage: 'Topic name can only contain letters and numbers' });
+      setError({ errorMessage: 'Topic name can only contain letters and numbers and white spaces.' });
       return;
-    } 
+    }
 
     try{
       await fetch('http://localhost:5055/api/Topics', {

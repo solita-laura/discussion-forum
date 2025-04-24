@@ -16,3 +16,21 @@ services:
     image: adminer
     ports:
       - 8088:8080
+  backend:
+    build:
+      context: ./DiscussionForum
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 5055:5055
+    depends_on:
+      - db
+  frontend:
+    build:
+      context: ./dicussion-forum-front
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 5173:5173
+    depends_on:
+      - backend

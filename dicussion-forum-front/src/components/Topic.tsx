@@ -77,7 +77,7 @@ function Topic(props: TopicProps) {
       </div>
       //* if messages are posted on the topic, only display the topic name *//
        ) :
-      <div className='border-b-2 p-5'>
+      <div className='border-b-1 p-5'>
         <h1 className="uppercase text-amber-800">{props.topicname}</h1>
       </div>
       }

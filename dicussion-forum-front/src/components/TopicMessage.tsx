@@ -40,7 +40,6 @@ function TopicMessage (props: MessageProps) {
    * @param event FormEvent
    */
   const handleSubmitMessage = (event: React.FormEvent<HTMLFormElement>) => {
-    console.log("checkpoint 0");
     props.sendUpdatedMessage(event, props.messageid);
     setIsEditing(false);
   };

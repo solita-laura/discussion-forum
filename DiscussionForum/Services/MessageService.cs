@@ -32,12 +32,9 @@ public class MessageService
                 _msgContext.messages.Add(message);
                 var response = await _msgContext.SaveChangesAsync();
 
-                //TODO: if this fails delete the message and send badrequest
-                //if the message is saved succesfully, update the message count and update time for the corresponding topic
-                //calculate message count from the messages table
                 if(response>0){
                     var topic = _topicContext.topics.FirstOrDefault(t => t.id.Equals(message.topicid));
-                    topic.messagecount += 1;
+                    topic.messagecount = _msgContext.messages.Count(m => m.topicid == message.topicid);
                     topic.lastupdated = message.postdate;
                     await _topicContext.SaveChangesAsync();
                 }
