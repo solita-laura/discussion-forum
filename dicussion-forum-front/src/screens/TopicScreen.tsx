@@ -21,6 +21,7 @@ function TopicScreen() {
       upvotes: number;
       postdate: Date;
       userid: number;
+      username: string;
     }
 
     type Error = {
@@ -197,6 +198,7 @@ function TopicScreen() {
               updateMessageContent={handleUpdatedContentChange} //listen to changes
               updateContent={updateMessage.updatedcontent} //updated content
               setInitialContent={setUpdateMessage} //set initial content as the current message content
+              username={message.username}
               />
           </div>
         </div>

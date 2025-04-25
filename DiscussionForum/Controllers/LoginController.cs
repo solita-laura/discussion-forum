@@ -1,9 +1,12 @@
 using DiscussionForum.Models;
 using DiscussionForum.Services;
+using Humanizer.Localisation.DateToOrdinalWords;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace DiscussionForum.Controllers
 {
@@ -15,6 +18,11 @@ namespace DiscussionForum.Controllers
 
         public LoginController (UserService userService){
             _userService = userService;
+        }
+
+        protected int GetUserId ()
+        {
+            return int.Parse(User.Claims.FirstOrDefault(c => c.Type == "userid")?.Value ?? "0");
         }
 
         //username: user1 password: test12
@@ -35,12 +43,10 @@ namespace DiscussionForum.Controllers
                     HttpOnly = true,
                     Secure = false, //set to true if https is enabled (production etc.)
                     SameSite = SameSiteMode.Lax,
-                    Expires = DateTimeOffset.UtcNow.AddHours(2)
+                    Expires = DateTimeOffset.UtcNow.AddMinutes(30)
                 };
 
                 Response.Cookies.Append("token", response.Token, cookieOptions);
-                Response.Headers.Append("role", response.Role);
-                Response.Headers.Append("id", response.Id.ToString());
                 
                 return Ok();
             }catch (UserNotFoundException ex){
@@ -54,6 +60,25 @@ namespace DiscussionForum.Controllers
             }
         }
 
-        
+        /// <summary>
+        /// Return the user id of the logged in user
+        /// </summary>
+        /// <returns>int</returns>
+
+        [HttpGet]
+        public ActionResult<int> GetUserInfo()
+        {
+            try
+            {
+                var userId = GetUserId();
+                return Ok(userId);
+            }
+            catch
+            {
+                return BadRequest("Error fetching user information");
+            }
+        }
+
+
     }
 }

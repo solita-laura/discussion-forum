@@ -61,7 +61,6 @@ namespace DiscussionForum.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 return BadRequest("Error creating topic");
             }
         }
@@ -136,7 +135,6 @@ namespace DiscussionForum.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 return BadRequest("Error deleting topic");
             }
         }

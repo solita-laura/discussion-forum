@@ -181,7 +181,7 @@ public class UserService
         try{
             var claims = new []
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, username),
+                    new Claim("username", username),
                     new Claim("userid", id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };

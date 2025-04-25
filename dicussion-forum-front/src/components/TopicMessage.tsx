@@ -1,6 +1,8 @@
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import EditIcon from '@mui/icons-material/Edit';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { GetUserId } from '../functions/GetUserId';
+
 
 type MessageProps = {
   content: string;
@@ -9,6 +11,7 @@ type MessageProps = {
   userid: number;
   messageid: number;
   updateContent:string;
+  username: string;
   sendUpdatedMessage: (event: React.FormEvent<HTMLFormElement>, messageid: number) => void;
   updateMessageContent: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   setInitialContent: React.Dispatch<React.SetStateAction<{updatedcontent: string}>>;
@@ -21,8 +24,8 @@ type MessageProps = {
  */
 function TopicMessage (props: MessageProps) {
 
-  const sessionuserid = sessionStorage.getItem('id'); 
   const [isEditing, setIsEditing] = useState(false);
+  const [sessionUserId, setSessionUserId] = useState<number | null>(null);
 
   /**
    * stop further propagations of the event and toggle the edit mode 
@@ -44,8 +47,25 @@ function TopicMessage (props: MessageProps) {
     setIsEditing(false);
   };
 
+  /**
+   * Get the user id from the server
+   */
+  useEffect(() => {
+    async function fetchUserId() {
+      const id = await GetUserId();
+      if (id) {
+        setSessionUserId(id);
+      } else {
+        console.error('Failed to fetch user ID');
+      }
+
+    }
+    fetchUserId();
+  }, []);
+
   return (
     <div className="p-5">
+      <div className="text-left text-cyan-900 font-semibold underline">{props.username}</div>
       {isEditing ? (
       //* display the editing form if editing is clicked *//
       <div>
@@ -71,7 +91,7 @@ function TopicMessage (props: MessageProps) {
           <p className="text-xs">{props.upvotes}</p>
           <p className="text-xs">{props.postdate.toLocaleDateString()}</p>
         </div>
-      {sessionuserid == props.userid.toString()? (
+      {sessionUserId == props.userid? (
         /* display the edit icon if the user is the owner of the message */
         <EditIcon className="cursor-pointer" onClick={handleEditClick}/>
       ):( 

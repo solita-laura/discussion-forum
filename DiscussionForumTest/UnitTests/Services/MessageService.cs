@@ -17,6 +17,7 @@ public class MessageService_UnitTests {
     {
         var msgContextMock = new Mock<MessageContext>();
         var topicContextMock = new Mock<TopicContext>();
+        var userContextMock = new Mock<UserContext>();
 
         var topicData = new List<Topic>
         {
@@ -29,15 +30,24 @@ public class MessageService_UnitTests {
         topicContextMock.Setup(t => t.SaveChangesAsync(default))
                     .ReturnsAsync(1);
 
-        var msgData = new List<Message>();
+        var msgData = new List<Message>
+        {
+            new Message{ id=1, topicid=1, userid=1, content="some content", postdate=DateTime.UtcNow},
+            new Message{ id=2, topicid=2, userid=2, content="some other content", postdate=DateTime.UtcNow}
+        };
+
 
         msgContextMock.Setup(m => m.messages)
                         .ReturnsDbSet(msgData);
         
         msgContextMock.Setup(m => m.SaveChangesAsync(default))
                   .ReturnsAsync(1);
+        
+        var usrData = new List<User>();
+        userContextMock.Setup(u => u.users)
+                        .ReturnsDbSet(usrData);
 
-        var msgService = new MessageService(msgContextMock.Object, topicContextMock.Object);
+        var msgService = new MessageService(msgContextMock.Object, topicContextMock.Object, userContextMock.Object);
 
         var response = await msgService.CreateMessage(new Message{topicid=1, userid=1, content="some content"});
         Assert.That(response, Is.TypeOf(typeof(OkObjectResult)));
@@ -63,6 +73,7 @@ public class MessageService_UnitTests {
     {
         var msgContextMock = new Mock<MessageContext>();
         var topicContextMock = new Mock<TopicContext>();
+        var userContextMock = new Mock<UserContext>();
 
         var msgData = new List<Message>
         {
@@ -76,7 +87,7 @@ public class MessageService_UnitTests {
         msgContextMock.Setup(m => m.SaveChangesAsync(default))
                   .ReturnsAsync(2);
 
-        var msgService = new MessageService(msgContextMock.Object, topicContextMock.Object);
+        var msgService = new MessageService(msgContextMock.Object, topicContextMock.Object, userContextMock.Object);
 
         var response = await msgService.DeleteMessage(1);
         Assert.That(response, Is.TypeOf(typeof(OkObjectResult)));
@@ -84,6 +95,47 @@ public class MessageService_UnitTests {
         msgContextMock.Verify(m => m.messages.RemoveRange(It.IsAny<IEnumerable<Message>>()), Times.Once);
        
 
+    }
+
+    /// <summary>
+    /// Test getting all messages for a topic.
+    /// </summary>
+
+    [Test]
+    public async Task GetAllMessages_Success()
+    {
+        var msgContextMock = new Mock<MessageContext>();
+        var topicContextMock = new Mock<TopicContext>();
+        var userContextMock = new Mock<UserContext>();
+
+        var msgData = new List<Message>
+        {
+            new Message{ id=1, topicid=1, userid=1, content="some content", postdate=DateTime.UtcNow},
+            new Message{ id=2, topicid=1, userid=2, content="some other content", postdate=DateTime.UtcNow}
+        };
+
+        msgContextMock.Setup(m => m.messages)
+                        .ReturnsDbSet(msgData);
+
+        var usrData = new List<User>
+        {
+            new User{ id=1, username="user1"},
+            new User{ id=2, username="user2"}
+        };
+
+        userContextMock.Setup(u => u.users)
+                        .ReturnsDbSet(usrData);
+
+
+        var msgService = new MessageService(msgContextMock.Object, topicContextMock.Object, userContextMock.Object);
+
+        var response = await msgService.GetAllMessages(1);
+        
+        Assert.That(response.Count(), Is.EqualTo(2));
+        Assert.That(response[0].content, Is.EqualTo("some content"));
+        Assert.That(response[0].username, Is.EqualTo("user1"));
+        Assert.That(response[1].content, Is.EqualTo("some other content"));
+        Assert.That(response[1].username, Is.EqualTo("user2"));
     }
 
 }

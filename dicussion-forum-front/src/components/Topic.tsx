@@ -1,7 +1,8 @@
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverTwoToneIcon from '@mui/icons-material/DeleteForeverTwoTone';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { GetUserId } from '../functions/GetUserId';
 
 type TopicProps = {
   topicid: number;
@@ -22,7 +23,7 @@ type TopicProps = {
 
 function Topic(props: TopicProps) {
 
-  const sessionuserid = sessionStorage.getItem('id');
+  const [sessionuserid, setSessionUserId] = useState<number | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
   /**
@@ -52,10 +53,26 @@ function Topic(props: TopicProps) {
     props.deleteTopic(event, props.topicid);
   };
 
+    /**
+     * Get the user id from the server
+     */
+    useEffect(() => {
+      async function fetchUserId() {
+        const id = await GetUserId();
+        if (id) {
+          setSessionUserId(id);
+        } else {
+          console.error('Failed to fetch user ID');
+        }
+  
+      }
+      fetchUserId();
+    }, []);
+
   return (
     <div className='border-2 w-3xl border-b-cyan-900'>
       <div className='p-1'>
-      {sessionuserid == props.userid.toString() ? (
+      {sessionuserid == props.userid ? (
       <DeleteForeverTwoToneIcon onClick={handleDeleteClick}/>):(null)}
       </div>
       {props.messagecount == 0 && isEditing ? (
@@ -73,7 +90,7 @@ function Topic(props: TopicProps) {
         </form> 
         </div>
       //* If no messages and not editing, display the topic name with edit icon *//
-      ) : props.messagecount == 0 && !isEditing && sessionuserid==props.userid.toString()? (
+      ) : props.messagecount == 0 && !isEditing && sessionuserid==props.userid? (
       <div className='border-b-1 border-b-neutral-400 inline-flex w-full justify-center items-center space-x-3 p-5'>
         <h1 className="uppercase text-amber-800">{props.topicname}</h1>
         <EditIcon onClick={handleEditClick}/>

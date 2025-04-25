@@ -30,7 +30,8 @@ public class Message
 
     [Required]
     public int userid { get; set; }
+
     public int upvotes { get; set; }
 
-    public DateTime postdate {get; set;} = DateTime.UtcNow;
+    public DateTime postdate {get; set;}
 }

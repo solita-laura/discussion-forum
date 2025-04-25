@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Form from '../components/Form';
 import { useNavigate } from 'react-router-dom';
+import { GetUserId } from '../functions/GetUserId';
 
 /**
  * Login the user to the discussion forum
@@ -69,6 +70,20 @@ function LoginScreen(){
             setErrorValues({ Error: "Error logging in." });
         };
      }
+
+     /**
+      * Check if the user is already logged in and redirect to the dashboard
+      */
+
+     useEffect(() => {
+         async function fetchUserId() {
+           const id = await GetUserId();
+           if (id) {
+             navigate('/dashboard');
+           } 
+         }
+         fetchUserId();
+       }, [navigate]);
 
     return (
         <div>

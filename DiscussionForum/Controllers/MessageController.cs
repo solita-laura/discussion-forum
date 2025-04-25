@@ -33,16 +33,15 @@ namespace DiscussionForum.Controllers
         /// <returns>Message</returns>
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Message>>> GetAllMessages([FromQuery (Name ="topicid")] [Range(0,int.MaxValue)] int id)
+        public async Task<ActionResult<IEnumerable<MessageResponse>>> GetAllMessages([FromQuery (Name ="topicid")] [Range(0,int.MaxValue)] int id)
         {
             try
             {
-                var messages = await _context.messages.Where(m => m.topicid == id).OrderBy(m => m.postdate).ToListAsync();
+                var messages = await _messageService.GetAllMessages(id);
                 return Ok(messages);
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.Message);
                 return BadRequest("Error fetching messages");
             }
         }
@@ -61,6 +60,8 @@ namespace DiscussionForum.Controllers
             {
                 var id = GetUserId();
                 message.userid = id;
+                message.postdate = DateTime.UtcNow;
+
                 await _messageService.CreateMessage(message);
                 return Ok("message created successfully");
             }
