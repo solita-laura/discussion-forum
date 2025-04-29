@@ -3,6 +3,7 @@ import '../App.css'
 import LoginScreen from './screens/LoginScreen'
 import Dashboard from './screens/Dashboard'
 import TopicScreen from './screens/TopicScreen'
+import RegistrationScreen from './screens/RegistrationScreen'
 
 function App() {
 
@@ -13,6 +14,7 @@ function App() {
         <Route path="/login" element={<LoginScreen/>} />
         <Route path="/dashboard" element={<Dashboard/>} />
         <Route path="/topic" element={<TopicScreen />} />
+        <Route path="/registration" element={<RegistrationScreen/>} />
       </Routes>
     </BrowserRouter>
   )

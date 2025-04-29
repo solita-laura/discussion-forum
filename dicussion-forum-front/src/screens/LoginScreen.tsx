@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Form from '../components/Form';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GetUserId } from '../functions/GetUserId';
 
 /**
@@ -47,7 +47,7 @@ function LoginScreen(){
         }
 
         try{
-            await fetch('http://localhost:5055/api/Login', {
+            await fetch('http://localhost:5055/api/Auth/login-user', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -97,6 +97,9 @@ function LoginScreen(){
                 addPassword={handleChange}
                 logUser={loginUser}
                 error = {errorValues.Error}/>
+            <div>
+                <p>Not a user yet? Please register <Link to="/registration">here</Link></p>
+            </div>
         </div>
     );
 }

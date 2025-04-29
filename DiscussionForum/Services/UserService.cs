@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace DiscussionForum.Services;
 public class UserService
 {
-    private readonly UserContext _context;
+    /*private readonly UserContext _context;
     private readonly IConfiguration _configuration;
 
     public UserService (IConfiguration configuration, UserContext context){
@@ -201,6 +201,6 @@ public class UserService
         }catch{
             throw new Exception("Error creating the JWT token");
         }
-    }
+    }*/
 
 }

@@ -1,16 +1,40 @@
 services:
   db:
-    image: laurapihamaa623/discussion-forum:database
+    image: postgres:16
     restart: always
     environment: 
       POSTGRES_USER: admin1
       POSTGRES_PASSWORD: admin1
       POSTGRES_DB: discussion-forum
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # build: .
+    #  context: .
+    #  dockerfile: Dockerfile
     ports:
       - 5432:5432
+  usermigrations:
+    image: user-migrations
+    build:
+     context: ./DiscussionForum
+     dockerfile: Dockerfile
+     target: usermigrations
+    depends_on:
+      - db
+  messagemigrations:
+    image: message-migrations
+    build:
+     context: ./DiscussionForum
+     dockerfile: Dockerfile
+     target: messagemigrations
+    depends_on:
+      - db
+  topicmigrations:
+    image: topic-migrations
+    build:
+     context: ./DiscussionForum
+     dockerfile: Dockerfile
+     target: topicmigrations
+    depends_on:
+      - db
   adminer:
     image: adminer
     restart: always

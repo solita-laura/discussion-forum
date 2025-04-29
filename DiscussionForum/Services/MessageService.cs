@@ -35,7 +35,7 @@ public class MessageService
                 content = m.content,
                 topicid = m.topicid,
                 userid = m.userid,
-                username = _userContext.users.FirstOrDefault(u => u.id == m.userid)?.username,
+                username = _userContext.users.FirstOrDefault(u => u.Id == m.userid.ToString())?.NormalizedUserName,
                 upvotes = m.upvotes,
                 postdate = m.postdate
             }).ToList();

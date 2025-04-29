@@ -60,16 +60,10 @@ function Dashboard() {
           setError({ errorMessage: '' });
           setTopics(await response.json());
         } else {
-          switch (response.status) {
-            case 401:
-              navigate('/login');
-              break;
-            default: 
-              setError({ errorMessage: 'Error fetching topics' });
-              setTopics([]);
-              break; 
+          setError({ errorMessage: 'Error fetching topics' });
+          setTopics([]);
+          navigate('/login');
           }
-        }
       });
     }catch{
       setError({ errorMessage: 'Error fetching topics' });

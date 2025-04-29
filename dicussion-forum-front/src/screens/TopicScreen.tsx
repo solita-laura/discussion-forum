@@ -60,16 +60,10 @@ function TopicScreen() {
           if (response.ok) {
             setMessages(await response.json());
           } else {
-            switch (response.status) {
-              case 401:
-                navigate('/login');
-                break;
-              default: 
-                setError({ errorMessage: "Error fetching messages" });
-                setMessages([]);
-                break; 
-              }
-            }
+            setError({ errorMessage: "Error fetching messages" });
+            setMessages([]);
+            navigate('/login');
+          }
         });
       } catch {
         setError({ errorMessage: "Error fetching messages" });
