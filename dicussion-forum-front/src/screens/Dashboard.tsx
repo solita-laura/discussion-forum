@@ -14,7 +14,7 @@ function Dashboard() {
     topicname: string;
     messagecount: number;
     lastupdated: Date;
-    userid: number;
+    userid: string;
   }
 
   type NewTopic = {

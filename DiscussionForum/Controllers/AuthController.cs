@@ -1,11 +1,12 @@
+using DiscussionForum.DbEntities;
 using DiscussionForum.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DiscussionForum.Controllers
 {
@@ -21,11 +22,6 @@ namespace DiscussionForum.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
-        }
-
-        protected int GetUserId ()
-        {
-            return int.Parse(User.Claims.FirstOrDefault(c => c.Type == "userid")?.Value ?? "0");
         }
 
         //username: user1 password: test12
@@ -49,18 +45,6 @@ namespace DiscussionForum.Controllers
                     throw new InvalidPasswordException("Invalid user credentials.");
                 }
 
-                var token = GenerateJwtToken(user);
-
-                var cookieOptions = new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = false, //set to true if https is enabled (production etc.)
-                    SameSite = SameSiteMode.Lax,
-                    Expires = DateTimeOffset.UtcNow.AddMinutes(30)
-                };
-
-                Response.Cookies.Append("token", token, cookieOptions);
-                
                 return Ok();
 
             }catch (UserNotFoundException ex){
@@ -106,11 +90,14 @@ namespace DiscussionForum.Controllers
         /// <returns>int</returns>
 
         [HttpGet]
-        public ActionResult<int> GetUserInfo()
+        public ActionResult<string> GetUserInfo()
         {
             try
             {
-                var userId = GetUserId();
+                var userId = _userManager.GetUserId(User);
+                if(userId==null){
+                    return BadRequest("User not logged in");
+                }
                 return Ok(userId);
             }
             catch
@@ -124,16 +111,15 @@ namespace DiscussionForum.Controllers
     /// </summary>
     /// <param name="username">string</param>
     /// <returns>string</returns>
-    private string GenerateJwtToken(User user)
+    private async Task<string> GenerateJwtToken(User user)
     {
         try{
+
             var claims = new []
                 {
-                    new Claim("username", user.UserName),
-                    new Claim("userid", user.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
-
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

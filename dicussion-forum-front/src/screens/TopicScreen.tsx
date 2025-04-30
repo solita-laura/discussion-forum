@@ -20,7 +20,7 @@ function TopicScreen() {
       content: string;
       upvotes: number;
       postdate: Date;
-      userid: number;
+      userid: string;
       username: string;
     }
 

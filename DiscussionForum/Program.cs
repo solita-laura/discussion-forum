@@ -1,12 +1,11 @@
 using System.Text;
 using DiscussionForum.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using DiscussionForum.Services;
 using DiscussionForum.DbEntities;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using System.IdentityModel.Tokens.Jwt;
+
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -18,8 +17,7 @@ builder.Services.AddCors(options =>
         builder => builder.WithOrigins("http://localhost:5173")
                           .AllowAnyMethod()
                           .AllowAnyHeader()
-                          .AllowCredentials()
-                          .WithExposedHeaders("role", "id"));
+                          .AllowCredentials());
 });
 
 // Add services to the container.
@@ -31,6 +29,8 @@ builder.Services.AddScoped<MessageService>();
 builder.Services.AddDbContext<TopicContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<UserContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<MessageContext>(options => options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 builder.Services.AddIdentity<User, IdentityRole>(options =>{
     options.Password.RequireDigit = true;
@@ -47,34 +47,12 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>{
     .AddDefaultTokenProviders()
     .AddRoles<IdentityRole>();
 
-//create jwt bearer
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options => 
+builder.Services.ConfigureApplicationCookie(options => 
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = configuration["Jwt:ValidIssuer"],
-        ValidAudience = configuration["Jwt:ValidAudience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Secret"]))
-    };
-    options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
-        {
-            var cookie = context.Request.Cookies["token"];
-            if (cookie!=null)
-            {
-                context.Token = cookie;
-            }
-            return Task.CompletedTask;
-        }
-    };
+        options.Cookie.Name = "authtoken";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
     });
-
 
 var app = builder.Build();
 

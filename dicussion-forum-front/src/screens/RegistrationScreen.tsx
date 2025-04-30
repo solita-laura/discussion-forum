@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 import Form from "../components/Form";
+import { GetUserId } from "../functions/GetUserId";
 
 function RegistrationScreen(){
 
@@ -34,6 +35,13 @@ function RegistrationScreen(){
             return;
         }
 
+        console.log(registrationValues.Password);
+
+        if(!checkPassword(registrationValues.Password)){
+            setErrorValues({Error: 'Password should contain at least one lowercase letter, one uppercase letter and one special character (!@#$%^&*) and it should be between 8 to 20 characters long.'});
+            return;
+        }
+
         try{
             await fetch('http://localhost:5055/api/Auth/register-user', {
                 method: 'POST',
@@ -60,7 +68,7 @@ function RegistrationScreen(){
      * Check if the user is already logged in and redirect to the dashboard
      */
     
-    /**useEffect(() => {
+    useEffect(() => {
              async function fetchUserId() {
                const id = await GetUserId();
                if (id) {
@@ -68,7 +76,16 @@ function RegistrationScreen(){
                } 
              }
              fetchUserId();
-           }, [navigate]);*/
+           }, [navigate]);
+    
+    /**
+   * check password validation
+   * @returns boolean
+   */
+
+  const checkPassword = (nameToValidate: string): boolean => {
+    return RegExp(('^(?=.*?[A-Za-z])(?=.*?[0-9])(?=.*[!@#$%^&*]).{8,20}$')).test(nameToValidate);
+  }
 
     return (
         <div>

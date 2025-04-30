@@ -9,7 +9,7 @@ type TopicProps = {
   topicname: string;
   messagecount: number;
   lastupdated: Date;
-  userid: number;
+  userid: string;
   addTopicName: (event: React.ChangeEvent<HTMLInputElement>) => void;
   sendTopicName: (event: React.FormEvent<HTMLFormElement>, topicid:number) => void;
   deleteTopic: (event: React.MouseEvent, topicid: number) => void;
@@ -23,7 +23,7 @@ type TopicProps = {
 
 function Topic(props: TopicProps) {
 
-  const [sessionuserid, setSessionUserId] = useState<number | null>(null);
+  const [sessionuserid, setSessionUserId] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
   /**
@@ -61,6 +61,7 @@ function Topic(props: TopicProps) {
         const id = await GetUserId();
         if (id) {
           setSessionUserId(id);
+          console.log(sessionuserid);
         } else {
           console.error('Failed to fetch user ID');
         }

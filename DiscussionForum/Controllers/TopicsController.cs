@@ -2,6 +2,7 @@ using System.Net;
 using DiscussionForum.Models;
 using DiscussionForum.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,15 +16,12 @@ namespace DiscussionForum.Controllers
     {
         private readonly TopicContext _context;
         private readonly MessageService _messageService;
+        private readonly UserManager<User> _userManager;
 
-        public TopicsController (TopicContext context, MessageService messageService){
+        public TopicsController (TopicContext context, MessageService messageService, UserManager<User> userManager){
             _context = context;
             _messageService = messageService;
-        }
-
-        protected int GetUserId ()
-        {
-            return int.Parse(User.Claims.FirstOrDefault(c => c.Type == "userid")?.Value ?? "0");
+            _userManager=userManager;
         }
 
         /// <summary>
@@ -53,7 +51,8 @@ namespace DiscussionForum.Controllers
         {
             try
             {
-                var id = GetUserId();
+                var id = _userManager.GetUserId(User);
+                Console.WriteLine(id);
                 topic.userid = id;
                 _context.topics.Add(topic);
                 await _context.SaveChangesAsync();
@@ -61,6 +60,7 @@ namespace DiscussionForum.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return BadRequest("Error creating topic");
             }
         }
@@ -86,7 +86,7 @@ namespace DiscussionForum.Controllers
                     return BadRequest("Topic name cannot be updated as it has messages.");
                 }
 
-                var userid = GetUserId();
+                var userid =_userManager.GetUserId(User);
                 if (topic.userid != userid)
                 {
                     return BadRequest("You are not authorized to update this topic.");
@@ -116,7 +116,7 @@ namespace DiscussionForum.Controllers
             {
                 var topic = await _context.topics.FindAsync(id);
 
-                var userid = GetUserId();
+                var userid =_userManager.GetUserId(User);
                 if (topic.userid != userid)
                 {
                     return BadRequest("You are not authorized to delete this topic.");

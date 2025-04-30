@@ -28,8 +28,7 @@ public class Message
     [Required]
     public int topicid { get; set; }
 
-    [Required]
-    public int userid { get; set; }
+    public string? userid { get; set; }
 
     public int upvotes { get; set; }
 

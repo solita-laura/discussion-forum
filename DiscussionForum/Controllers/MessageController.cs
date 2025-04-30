@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using DiscussionForum.DbEntities;
+using DiscussionForum.Models;
 using DiscussionForum.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,15 +16,12 @@ namespace DiscussionForum.Controllers
     {
         private readonly MessageContext _context;
         private readonly MessageService _messageService;
-        public MessageController(MessageContext context, MessageService messageService)
+        private readonly UserManager<User> _userManager;
+        public MessageController(MessageContext context, MessageService messageService, UserManager<User> userManager)
         {
             _messageService = messageService;
             _context = context;
-        }
-
-        protected int GetUserId ()
-        {
-            return int.Parse(User.Claims.FirstOrDefault(c => c.Type == "userid")?.Value ?? "0");
+            _userManager=userManager;
         }
 
         /// <summary>
@@ -58,7 +56,7 @@ namespace DiscussionForum.Controllers
         {
             try
             {
-                var id = GetUserId();
+                var id = _userManager.GetUserId(User);
                 message.userid = id;
                 message.postdate = DateTime.UtcNow;
 
@@ -83,7 +81,7 @@ namespace DiscussionForum.Controllers
         {
             try
             {
-                var id = GetUserId();
+                var id = _userManager.GetUserId(User);
                 var msg = await _context.messages.FirstOrDefaultAsync(m => m.id == messageid);
 
                 if(msg.userid != id)
