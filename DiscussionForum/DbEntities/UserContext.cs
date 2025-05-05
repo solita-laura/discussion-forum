@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DiscussionForum.Models;
 
-public class UserContext : IdentityDbContext<User>
+public class UserContext : IdentityDbContext<User, IdentityRole, string>
 {
     public UserContext(){}
     public UserContext(DbContextOptions<UserContext> options) : base(options){}
@@ -31,7 +31,6 @@ public class UserContext : IdentityDbContext<User>
 
         modelBuilder.Ignore<IdentityUserToken<string>>();
         modelBuilder.Ignore<IdentityUserLogin<string>>();
-        modelBuilder.Ignore<IdentityRoleClaim<string>>();
 
         modelBuilder.Entity<User>()
             .Ignore(c => c.Email)

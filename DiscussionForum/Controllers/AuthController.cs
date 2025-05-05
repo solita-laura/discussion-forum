@@ -1,12 +1,6 @@
-using DiscussionForum.DbEntities;
 using DiscussionForum.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DiscussionForum.Controllers
 {
@@ -16,15 +10,12 @@ namespace DiscussionForum.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly IConfiguration _configuration;
 
-        public AuthController (UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration){
+        public AuthController (UserManager<User> userManager, SignInManager<User> signInManager){
             _userManager = userManager;
             _signInManager = signInManager;
-            _configuration = configuration;
         }
 
-        //username: user1 password: test12
         /// <summary>
         /// Controller to handle the login request
         /// </summary>
@@ -59,6 +50,12 @@ namespace DiscussionForum.Controllers
             }
         }
 
+        /// <summary>
+        /// Create a new user
+        /// </summary>
+        /// <param name="registrationRequest">RegistrationRequest</param>
+        /// <returns>string</returns>
+
         [HttpPost("register-user")]
         public async Task<ActionResult<string>> RegisterUser([FromBody]RegistrationRequest registrationRequest)
         {
@@ -76,6 +73,8 @@ namespace DiscussionForum.Controllers
                     return BadRequest("User registration failed.");
                 }
 
+                await _userManager.AddToRoleAsync(user, "User");
+
                 return Ok("User registered successfully.");
             }
             catch
@@ -84,12 +83,28 @@ namespace DiscussionForum.Controllers
             }
         }
 
+        [HttpPost("logout-user")]
+        public async Task<ActionResult<string>> LogoutUser ()
+        {
+            try
+            {
+                await _signInManager.SignOutAsync();
+                return Ok("User signed out succusefully");
+            }
+            catch
+            {
+                return BadRequest("Error in sign out.");
+            }
+        }
+
+
+
         /// <summary>
         /// Return the user id of the logged in user
         /// </summary>
-        /// <returns>int</returns>
+        /// <returns>string</returns>
 
-        [HttpGet]
+        [HttpGet("get-userid")]
         public ActionResult<string> GetUserInfo()
         {
             try
@@ -107,35 +122,24 @@ namespace DiscussionForum.Controllers
         }
 
         /// <summary>
-    /// Generate a jwt token once user is authenticated
-    /// </summary>
-    /// <param name="username">string</param>
-    /// <returns>string</returns>
-    private async Task<string> GenerateJwtToken(User user)
-    {
-        try{
+        /// Return the users role
+        /// </summary>
+        /// <returns>string</returns>
 
-            var claims = new []
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:ValidIssuer"],
-                audience: _configuration["Jwt:ValidAudience"],
-                claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
-                signingCredentials: creds
-                );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }catch{
-            throw new Exception("Error creating the JWT token");
+        [HttpGet("get-userrole")]
+        public async Task<ActionResult<string>> GetUserRole()
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var userRole = await _userManager.GetRolesAsync(user);
+                return Ok(userRole);
+            }
+            catch
+            {
+                return BadRequest("Error fetching user role");
+            }
         }
-    }
 
 
     }

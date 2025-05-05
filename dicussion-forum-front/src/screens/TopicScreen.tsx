@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import TopicMessage from "../components/TopicMessage";
 import MessageForm from "../components/MessageForm";
+import HeaderBar from "../components/HeaderBar";
+import { LogOutUser } from "../functions/LogOutUser";
 
 
 /**
@@ -176,9 +178,20 @@ function TopicScreen() {
       getMessages();
     }, []);
 
+  const logOut = async(event: React.MouseEvent) => {
+      event.preventDefault();
+      if(await LogOutUser()){
+        navigate('/login');
+      }
+    }
+
   return (
     <div className="flex flex-col justify-center">
-      <h1 className="top-0 uppercase text-cyan-900 p-5 w-full">{topicname}</h1>
+      <HeaderBar
+        topicname={topicname}
+        logOut={logOut}
+        />
+      <div className="mt-10">
       {messages ? messages.map((message) => (
         <div key={message.id}>
           <div className="border-2 m-3">
@@ -197,6 +210,7 @@ function TopicScreen() {
           </div>
         </div>
       )) : <h1>No messages found</h1>}
+      </div>
       <div className="w-4xl">
           <MessageForm
             message={messageContent.content}

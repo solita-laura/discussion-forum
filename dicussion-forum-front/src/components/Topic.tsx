@@ -2,7 +2,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverTwoToneIcon from '@mui/icons-material/DeleteForeverTwoTone';
 import { useEffect, useState } from 'react';
-import { GetUserId } from '../functions/GetUserId';
+import { GetUserRole } from '../functions/GetUserRole';
 
 type TopicProps = {
   topicid: number;
@@ -23,7 +23,7 @@ type TopicProps = {
 
 function Topic(props: TopicProps) {
 
-  const [sessionuserid, setSessionUserId] = useState<string | null>(null);
+  const [userrole, setUserRole] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
   /**
@@ -57,26 +57,25 @@ function Topic(props: TopicProps) {
      * Get the user id from the server
      */
     useEffect(() => {
-      async function fetchUserId() {
-        const id = await GetUserId();
-        if (id) {
-          setSessionUserId(id);
-          console.log(sessionuserid);
+      async function fetchUserRole() {
+        const role = await GetUserRole();
+        if (role) {
+          setUserRole(role);
         } else {
           console.error('Failed to fetch user ID');
         }
   
       }
-      fetchUserId();
+      fetchUserRole();
     }, []);
 
   return (
     <div className='border-2 w-3xl border-b-cyan-900'>
       <div className='p-1'>
-      {sessionuserid == props.userid ? (
+      {userrole == "Admin" ? (
       <DeleteForeverTwoToneIcon onClick={handleDeleteClick}/>):(null)}
       </div>
-      {props.messagecount == 0 && isEditing ? (
+      {isEditing ? (
         //* display the editing form if editing is clicked *//
         <div className='border-b-1 border-b-neutral-400 inline-flex w-full justify-center items-center space-x-3 p-5'>
         <form onSubmit={handleSubmitForm}>
@@ -91,7 +90,7 @@ function Topic(props: TopicProps) {
         </form> 
         </div>
       //* If no messages and not editing, display the topic name with edit icon *//
-      ) : props.messagecount == 0 && !isEditing && sessionuserid==props.userid? (
+      ) : props.messagecount == 0 && !isEditing && userrole=="Admin"? (
       <div className='border-b-1 border-b-neutral-400 inline-flex w-full justify-center items-center space-x-3 p-5'>
         <h1 className="uppercase text-amber-800">{props.topicname}</h1>
         <EditIcon onClick={handleEditClick}/>

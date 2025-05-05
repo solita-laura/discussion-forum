@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import Topic from "../components/Topic";
 import { useNavigate } from "react-router-dom";
+import HeaderBar from "../components/HeaderBar";
+import { LogOutUser } from "../functions/LogOutUser";
 
 /**
  * Dashboard present all the topics created to the discussion forum
@@ -230,10 +232,20 @@ function Dashboard() {
     });
   }
 
+  const logOut = async(event: React.MouseEvent) => {
+    event.preventDefault();
+    if(await LogOutUser()){
+      navigate('/login');
+    }
+  }
+
   return (
     <div className="flex flex-col justify-center">
-      <h1 className="top-0 w-full text-cyan-900 uppercase p-2">Topics</h1>
-      <form className="w-full p-8" onSubmit={createTopic}>
+      <HeaderBar
+      topicname=""
+      logOut={logOut}
+      />
+      <form className="w-full p-6 mt-8" onSubmit={createTopic}>
         <label className="text-cyan-900 flex justify-center">{error.errorMessage}</label>
         <input type="text"
           className="p-2 w-fit bg-gray-100 text-cyan-950 rounded"

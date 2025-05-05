@@ -7,7 +7,7 @@ export async function GetUserId(): Promise<string | null> {
 
 try{
 
-  const response = await fetch('http://localhost:5055/api/Auth', {
+  const response = await fetch('http://localhost:5055/api/Auth/get-userid', {
     method: 'GET',
     credentials: 'include',
     headers: {

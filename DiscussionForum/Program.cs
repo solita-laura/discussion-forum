@@ -22,7 +22,6 @@ builder.Services.AddCors(options =>
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<MessageService>();
 
 //add dbcontext
@@ -44,8 +43,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>{
     options.Lockout.MaxFailedAccessAttempts = 5;
 })
     .AddEntityFrameworkStores<UserContext>()
-    .AddDefaultTokenProviders()
-    .AddRoles<IdentityRole>();
+    .AddDefaultTokenProviders();
 
 builder.Services.ConfigureApplicationCookie(options => 
     {
@@ -54,7 +52,20 @@ builder.Services.ConfigureApplicationCookie(options =>
         options.Cookie.SameSite = SameSiteMode.Lax;
     });
 
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope()){
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    if(!await roleManager.RoleExistsAsync("User")){
+        await roleManager.CreateAsync(new IdentityRole("User"));
+    }
+    if(!await roleManager.RoleExistsAsync("Admin")){
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
+    }
+}
 
 app.UseHttpsRedirection();
 app.UseRouting();

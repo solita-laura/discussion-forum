@@ -73,6 +73,7 @@ namespace DiscussionForum.Controllers
         /// <returns>status code</returns>
 
         [HttpPut]
+        [Authorize(Roles="Admin")]
         public async Task<ActionResult> UpdateTopic([FromQuery(Name ="topicid")] int id, [FromBody] string topicname)
         {
 
@@ -110,6 +111,7 @@ namespace DiscussionForum.Controllers
         /// <returns>status code</returns>
 
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteTopic([FromQuery(Name = "topicid")] int id)
         {
             try
