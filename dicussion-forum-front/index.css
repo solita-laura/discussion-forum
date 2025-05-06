@@ -14,12 +14,8 @@
 }
 
 a {
-  font-weight: 500;
-  color: #dfe0e5;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #babbc8;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 body {
@@ -59,9 +55,9 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
-  a:hover {
+  /*a:hover {
     color: #ebebf4;
-  }
+  }*/
   button {
     background-color: #f9f9f9;
   }

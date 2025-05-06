@@ -10,7 +10,7 @@ type BarProps = {
     logOut: (event: React.MouseEvent) => void;
 }
 
-export default function ButtonAppBar(props: BarProps) {
+export default function HeaderBar(props: BarProps) {
 
     const navigation = useNavigate();
 

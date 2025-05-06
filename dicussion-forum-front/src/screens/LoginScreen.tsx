@@ -98,7 +98,7 @@ function LoginScreen(){
                 logUser={loginUser}
                 error = {errorValues.Error}/>
             <div>
-                <p>Not a user yet? Please register <Link to="/registration" className='text-cyan-900'>here</Link></p>
+                <p>Not a user yet? Please register <Link to="/registration" className="underline hover:text-gray-700">here</Link></p>
             </div>
         </div>
     );

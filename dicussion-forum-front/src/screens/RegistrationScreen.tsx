@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Form from "../components/Form";
 import { GetUserId } from "../functions/GetUserId";
 
@@ -18,6 +18,7 @@ function RegistrationScreen(){
     });
 
     const [errorValues, setErrorValues] = useState<ErrorValues>({Error: ''});
+    const [succesfullRegistration, setSuccesfullRegistration] = useState<boolean>(false);
 
     const navigate = useNavigate();
 
@@ -34,8 +35,6 @@ function RegistrationScreen(){
         if (!registrationValues.Username || !registrationValues.Password){
             return;
         }
-
-        console.log(registrationValues.Password);
 
         if(!checkPassword(registrationValues.Password)){
             setErrorValues({Error: 'Password should contain at least one lowercase letter, one uppercase letter and one special character (!@#$%^&*) and it should be between 8 to 20 characters long.'});
@@ -54,7 +53,7 @@ function RegistrationScreen(){
             .then(response => {
                 if(response.ok){
                     setErrorValues({Error: ''});
-                    navigate('/login')
+                    setSuccesfullRegistration(!succesfullRegistration);
                 } else {
                     setErrorValues({Error: 'Error in registration. Please try again.'})
                 }
@@ -89,9 +88,12 @@ function RegistrationScreen(){
 
     return (
         <div>
+        {!succesfullRegistration ? (
+            <div>
             <p>Welcome to the discussion forum!</p>
             <p>Please create a user to continue.</p>
-            <Form 
+            <div className="w-2xl">
+            <Form
                 username={registrationValues.Username} 
                 addUsername={handleChange} 
                 password={registrationValues.Password} 
@@ -99,6 +101,14 @@ function RegistrationScreen(){
                 logUser={registerUser}
                 error = {errorValues.Error}/>
             </div>
+            </div>
+            ) : 
+            <div>
+                <p>Your user is now created succesfully.</p>
+                <p>Go back to <Link to="/login" className="underline hover:text-gray-700">login</Link></p>
+            </div>
+            }
+        </div>
         );
 
 }

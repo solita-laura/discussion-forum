@@ -83,6 +83,11 @@ namespace DiscussionForum.Controllers
             }
         }
 
+        /// <summary>
+        /// log out the current user
+        /// </summary>
+        /// <returns>string</returns>
+
         [HttpPost("logout-user")]
         public async Task<ActionResult<string>> LogoutUser ()
         {
