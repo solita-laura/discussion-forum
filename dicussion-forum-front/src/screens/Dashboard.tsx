@@ -3,6 +3,7 @@ import Topic from "../components/Topic";
 import { useNavigate } from "react-router-dom";
 import HeaderBar from "../components/HeaderBar";
 import { LogOutUser } from "../functions/LogOutUser";
+import { GetUserId } from "../functions/GetUserId";
 
 /**
  * Dashboard present all the topics created to the discussion forum
@@ -64,7 +65,6 @@ function Dashboard() {
         } else {
           setError({ errorMessage: 'Error fetching topics' });
           setTopics([]);
-          navigate('/login');
           }
       });
     }catch{
@@ -108,16 +108,11 @@ function Dashboard() {
           setNewTopic({ topicname: '' });
           getTopics();
         } else {
-          switch (response.status) {
-            case 401:
-              navigate('/login');
-              break;
-            default: 
-              setError({ errorMessage: 'Error creating topic' });
-              break; 
+            setError({ errorMessage: 'Error creating topic' });
+            return; 
           } 
         }
-      });
+      );
     }catch{
       setError({ errorMessage: 'Error creating topic' });
     }
@@ -132,6 +127,12 @@ function Dashboard() {
   const sendUpdatedName = async (event: React.FormEvent<HTMLFormElement>, topicid:number) => {
     event.preventDefault();
 
+    //Check that the topic name is less than 20 characters and more than 0
+    if (updateTopicName.updateTopicName.length > 20 || updateTopicName.updateTopicName.length < 1) {
+      setError({ errorMessage: 'Topic name must be between 1 and 20 characters.' });
+      return;
+    }
+    
     if (!checkTopicName(updateTopicName.updateTopicName)) {
       setError({ errorMessage: 'Topic name can only contain letters, numbers and white spaces' });
       return;
@@ -151,15 +152,9 @@ function Dashboard() {
           setError({ errorMessage: '' });
           getTopics();
         } else {
-          switch (response.status) {
-            case 401:
-              navigate('/login');
-              break;
-            default: 
-              setError({ errorMessage: 'Error updating the topic name' });
-              break; 
-          }
-      }
+          setError({ errorMessage: 'Error updating the topic name' });
+          return;
+        }
     });
     } catch {
       setError({errorMessage: 'Error updating topic name'});
@@ -188,14 +183,8 @@ function Dashboard() {
           setError({ errorMessage: '' });
           getTopics();
         } else {
-          switch (response.status) {
-            case 401:
-              navigate('/login');
-              break;
-            default: 
-              setError({ errorMessage: 'Error deleting topic' });
-              break; 
-          }
+          setError({ errorMessage: 'Error deleting topic' });
+          return;
         }
       });
     } catch {
@@ -215,9 +204,21 @@ function Dashboard() {
   /**
    * load topics
    */
-
   useEffect(() => {
-    getTopics();
+    try{
+      async function fetchUserId() {
+        const id = await GetUserId();
+        if (id!=null) {
+            getTopics();
+        }else{
+          navigate('/login')
+        }
+      }
+        fetchUserId();
+      }
+      catch{
+          return;
+      }
   }, []);
 
   /**

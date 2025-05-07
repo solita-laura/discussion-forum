@@ -12,7 +12,7 @@ type BarProps = {
 
 export default function HeaderBar(props: BarProps) {
 
-    const navigation = useNavigate();
+  const navigation = useNavigate();
 
   return (
     <Box sx={{ flexGrow: 1 }}>

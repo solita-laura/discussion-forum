@@ -57,9 +57,6 @@ function LoginScreen(){
             })
             .then(response => {
                 if (response.ok) {
-                    sessionStorage.setItem('role', response.headers.get('role') || '');
-                    sessionStorage.setItem('id', response.headers.get('id') || '');
-
                     setErrorValues({Error: ''});
                     navigate('/dashboard');
                 } else {
@@ -76,14 +73,18 @@ function LoginScreen(){
       */
 
      useEffect(() => {
+        try{
          async function fetchUserId() {
            const id = await GetUserId();
-           if (id) {
+           if (id!=null) {
              navigate('/dashboard');
            } 
          }
-         fetchUserId();
-       }, [navigate]);
+         fetchUserId();}
+        catch{
+            return;
+        }
+       }, []);
 
     return (
         <div>

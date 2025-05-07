@@ -21,7 +21,7 @@ public class Topic {
 
     [Required]
     [RegularExpression(@"^[a-zA-Z0-9\s]+$", ErrorMessage = "Topic name can only contain letters, numbers, and spaces.")]
-    [StringLength(20, ErrorMessage = "Topic name cannot be longer than 20 characters.")]
+    [StringLength(20, MinimumLength =1, ErrorMessage = "Topic name cannot be longer than 20 characters.")]
     public string? topicname {get; set; }
     public int messagecount {get; set; }
 

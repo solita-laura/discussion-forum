@@ -56,7 +56,7 @@ function TopicMessage (props: MessageProps) {
       if (id) {
         setSessionUserId(id);
       } else {
-        console.error('Failed to fetch user ID');
+        setSessionUserId(null);
       }
 
     }

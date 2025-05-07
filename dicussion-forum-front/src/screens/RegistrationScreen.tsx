@@ -55,7 +55,14 @@ function RegistrationScreen(){
                     setErrorValues({Error: ''});
                     setSuccesfullRegistration(!succesfullRegistration);
                 } else {
-                    setErrorValues({Error: 'Error in registration. Please try again.'})
+                    switch (response.status){
+                        case 409:
+                            setErrorValues({Error: "Username is already in use"});
+                            return;
+                        default:
+                            setErrorValues({Error: 'Error in registration. Please try again.'});
+                            return;
+                    }
                 }
             })
         }catch{

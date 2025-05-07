@@ -2,13 +2,24 @@ using System.Net;
 using System.Net.Http.Json;
 using DiscussionForum.Models;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Newtonsoft.Json;
 
 public class TopicController_UnitTests 
 {
+    private WebApplicationFactory<Program> factory;
+    private HttpClient client;
 
     [SetUp]
     public void Setup()
     {
+        factory = new WebApplicationFactory<Program>();
+        client = factory.CreateClient();
+    }
+
+    [TearDown]
+    public void TearDown(){
+        factory.Dispose();
+        client.Dispose();
     }
 
     /// <summary>
@@ -19,36 +30,51 @@ public class TopicController_UnitTests
     [Test]
     public async Task CreateTopic_InvalidTopicname(){
 
-        var factory = new WebApplicationFactory<Program>();
-        var client = factory.CreateClient();
+        //name is too long
 
         var tooLongString = new string('a', 501);
-        var response = await client.PostAsync("/api/Topics", new StringContent(tooLongString, System.Text.Encoding.UTF8, "application/json"));
+
+        Topic topic = new Topic (){
+            topicname=tooLongString
+        };
+
+        var content = JsonConvert.SerializeObject(topic);
+
+        var response = await client.PostAsync("/api/Topics", new StringContent(content, System.Text.Encoding.UTF8, "application/json"));
 
         Assert.That(HttpStatusCode.BadRequest, Is.EqualTo(response.StatusCode));
 
+        //name has unallowed characters
+
         var unallowedCharacters = "topic!!";
 
-        var response2 = await client.PostAsync("/api/Topics", new StringContent(unallowedCharacters, System.Text.Encoding.UTF8, "application/json"));
+        topic.topicname=unallowedCharacters;
+
+        content=JsonConvert.SerializeObject(topic);
+
+        var response2 = await client.PostAsync("/api/Topics", new StringContent(content, System.Text.Encoding.UTF8, "application/json"));
 
         Assert.That(HttpStatusCode.BadRequest, Is.EqualTo(response2.StatusCode));
 
 
     }
 
-    /// <summary>
-    /// test updating topic when message count is not zero.
-    /// The test should fail.
-    /// </summary>
-
     [Test]
-    public async Task UpdateTopic_MessagecountNotZero ()
-    {
-        var factory = new WebApplicationFactory<Program>();
-        var client = factory.CreateClient();
+    public async Task CreateTopic_Success(){
 
-        var response = await client.PutAsync("/api/Topics?topicid=1", new StringContent("modified name", System.Text.Encoding.UTF8, "application/json"));
-        Assert.That(HttpStatusCode.BadRequest, Is.EqualTo(response.StatusCode));
+
+        Topic topic = new Topic (){
+            topicname="topic1"
+        };
+
+        var content = JsonConvert.SerializeObject(topic);
+
+        content=JsonConvert.SerializeObject(topic);
+
+        var response = await client.PostAsync("/api/Topics", new StringContent(content, System.Text.Encoding.UTF8, "application/json"));
+
+        Assert.That(HttpStatusCode.OK, Is.EqualTo(response.StatusCode));
+
 
     }
 

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using DiscussionForum.Models;
 using DiscussionForum.Services;
@@ -52,7 +53,6 @@ namespace DiscussionForum.Controllers
             try
             {
                 var id = _userManager.GetUserId(User);
-                Console.WriteLine(id);
                 topic.userid = id;
                 _context.topics.Add(topic);
                 await _context.SaveChangesAsync();
@@ -74,23 +74,15 @@ namespace DiscussionForum.Controllers
 
         [HttpPut]
         [Authorize(Roles="Admin")]
-        public async Task<ActionResult> UpdateTopic([FromQuery(Name ="topicid")] int id, [FromBody] string topicname)
+        public async Task<ActionResult> UpdateTopic([FromQuery(Name ="topicid")] int id, [FromBody] [StringLength(20, MinimumLength=1, ErrorMessage ="Topic name should be between 1 and 20 characters.")] string topicname)
         {
 
             try
             {
                 var topic = await _context.topics.FindAsync(id);
 
-                //topic name can only be updated if the message count is 0
-                if (topic.messagecount != 0)
-                {
-                    return BadRequest("Topic name cannot be updated as it has messages.");
-                }
-
-                var userid =_userManager.GetUserId(User);
-                if (topic.userid != userid)
-                {
-                    return BadRequest("You are not authorized to update this topic.");
+                if(topic.messagecount!=0){
+                    return BadRequest("You can only modify topic name if the topic has no messages");
                 }
 
                 topic.topicname = topicname;
@@ -117,12 +109,6 @@ namespace DiscussionForum.Controllers
             try
             {
                 var topic = await _context.topics.FindAsync(id);
-
-                var userid =_userManager.GetUserId(User);
-                if (topic.userid != userid)
-                {
-                    return BadRequest("You are not authorized to delete this topic.");
-                }
 
                 //delete the messages first
                 if (topic.messagecount != 0)

@@ -62,9 +62,8 @@ function Topic(props: TopicProps) {
         if (role) {
           setUserRole(role);
         } else {
-          console.error('Failed to fetch user ID');
+          setUserRole(null);
         }
-  
       }
       fetchUserRole();
     }, []);

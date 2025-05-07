@@ -15,6 +15,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard/>} />
         <Route path="/topic" element={<TopicScreen />} />
         <Route path="/registration" element={<RegistrationScreen/>} />
+        <Route path="*" element={<LoginScreen/>} />
       </Routes>
     </BrowserRouter>
   )

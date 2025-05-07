@@ -27,25 +27,18 @@ namespace DiscussionForum.Controllers
         {
 
             try{
-                var user = await _userManager.FindByNameAsync(loginRequest.Username.ToUpper());
+                var user = await _userManager.FindByNameAsync(loginRequest.Username);
 
                 var result = await _signInManager.PasswordSignInAsync(user, loginRequest.Password, false, lockoutOnFailure: false);
 
-                if (!result.Succeeded)
+                if (result.Succeeded)
                 {
-                    throw new InvalidPasswordException("Invalid user credentials.");
+                    return Ok();
                 }
 
-                return Ok();
+                return BadRequest("Login request failed.");
 
-            }catch (UserNotFoundException ex){
-                return NotFound(ex.Message);  
-            }
-            catch (InvalidPasswordException ex){
-                return Unauthorized(ex.Message);
-            }
-            catch (Exception ex){
-                Console.WriteLine(ex.Message);
+            }catch{
                 return BadRequest("Login request failed.");
             }
         }
@@ -68,14 +61,16 @@ namespace DiscussionForum.Controllers
 
                 var result = await _userManager.CreateAsync(user, registrationRequest.Password);
 
-                if (!result.Succeeded)
-                {
-                    return BadRequest("User registration failed.");
+                if(result.ToString().Contains("DuplicateUserName")){
+                    return Conflict("Username is already in use");
                 }
 
-                await _userManager.AddToRoleAsync(user, "User");
+                if (result.Succeeded){
+                    await _userManager.AddToRoleAsync(user, "User");
+                    return Ok("User registered successfully.");
+                }
 
-                return Ok("User registered successfully.");
+                return BadRequest("Error registering user");
             }
             catch
             {

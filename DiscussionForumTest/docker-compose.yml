@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment: 
+      POSTGRES_USER: admin1
+      POSTGRES_PASSWORD: admin1
+      POSTGRES_DB: discussion-forum-test
+    ports:
+      - 5000:5000
+  usermigrations:
+    image: user-migrations
+    build:
+     context: ../DiscussionForum
+     dockerfile: Dockerfile
+     target: usermigrations
+    depends_on:
+      - db
+  messagemigrations:
+    image: message-migrations
+    build:
+     context: ../DiscussionForum
+     dockerfile: Dockerfile
+     target: messagemigrations
+    depends_on:
+      - db
+  topicmigrations:
+    image: topic-migrations
+    build:
+     context: ../DiscussionForum
+     dockerfile: Dockerfile
+     target: topicmigrations
+    depends_on:
+      - db
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8088:8080

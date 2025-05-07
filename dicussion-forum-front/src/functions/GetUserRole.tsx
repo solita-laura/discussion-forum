@@ -6,7 +6,6 @@
 export async function GetUserRole(): Promise<string | null> {
 
     try{
-    
       const response = await fetch('http://localhost:5055/api/Auth/get-userrole', {
         method: 'GET',
         credentials: 'include',

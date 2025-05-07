@@ -4,6 +4,7 @@ import TopicMessage from "../components/TopicMessage";
 import MessageForm from "../components/MessageForm";
 import HeaderBar from "../components/HeaderBar";
 import { LogOutUser } from "../functions/LogOutUser";
+import { GetUserId } from "../functions/GetUserId";
 
 
 /**
@@ -64,7 +65,6 @@ function TopicScreen() {
           } else {
             setError({ errorMessage: "Error fetching messages" });
             setMessages([]);
-            navigate('/login');
           }
         });
       } catch {
@@ -83,6 +83,11 @@ function TopicScreen() {
 
       //dont send emtpy messages
       if(!messageContent.content) {
+        return;
+      }
+
+      if(messageContent.content.length>500){
+        setError({ errorMessage: "Maximum message length 500 characters."});
         return;
       }
       
@@ -125,6 +130,11 @@ function TopicScreen() {
 
       //dont send empty message
       if(!updateMessage.updatedcontent) {
+        return;
+      }
+
+      if(messageContent.content.length>500){
+        setError({ errorMessage: "Maximum message length 500 characters."});
         return;
       }
       
@@ -174,9 +184,25 @@ function TopicScreen() {
       })
     }
 
-    useEffect(() => {
-      getMessages();
-    }, []);
+    /**
+   * load messages
+   */
+  useEffect(() => {
+    try{
+      async function fetchUserId() {
+        const id = await GetUserId();
+        if (id!=null) {
+            getMessages();
+        }else{
+          navigate('/login')
+        }
+      }
+        fetchUserId();
+      }
+      catch{
+          return;
+      }
+  }, []);
 
   const logOut = async(event: React.MouseEvent) => {
       event.preventDefault();
