@@ -12,7 +12,7 @@ services:
     ports:
       - 5432:5432
   usermigrations:
-    image: user-migrations
+    image: laurapihamaa623/discussion-forum:user-migrations
     build:
      context: ./DiscussionForum
      dockerfile: Dockerfile
@@ -20,7 +20,7 @@ services:
     depends_on:
       - db
   messagemigrations:
-    image: message-migrations
+    image: laurapihamaa623/discussion-forum:message-migrations
     build:
      context: ./DiscussionForum
      dockerfile: Dockerfile
@@ -28,7 +28,7 @@ services:
     depends_on:
       - db
   topicmigrations:
-    image: topic-migrations
+    image: laurapihamaa623/discussion-forum:topic-migrations
     build:
      context: ./DiscussionForum
      dockerfile: Dockerfile
