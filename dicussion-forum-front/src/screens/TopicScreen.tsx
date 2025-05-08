@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import TopicMessage from "../components/TopicMessage";
 import MessageForm from "../components/MessageForm";
+import HeaderBar from "../components/HeaderBar";
+import { LogOutUser } from "../functions/LogOutUser";
+import { GetUserId } from "../functions/GetUserId";
 
 
 /**
@@ -20,7 +23,7 @@ function TopicScreen() {
       content: string;
       upvotes: number;
       postdate: Date;
-      userid: number;
+      userid: string;
       username: string;
     }
 
@@ -60,16 +63,9 @@ function TopicScreen() {
           if (response.ok) {
             setMessages(await response.json());
           } else {
-            switch (response.status) {
-              case 401:
-                navigate('/login');
-                break;
-              default: 
-                setError({ errorMessage: "Error fetching messages" });
-                setMessages([]);
-                break; 
-              }
-            }
+            setError({ errorMessage: "Error fetching messages" });
+            setMessages([]);
+          }
         });
       } catch {
         setError({ errorMessage: "Error fetching messages" });
@@ -87,6 +83,11 @@ function TopicScreen() {
 
       //dont send emtpy messages
       if(!messageContent.content) {
+        return;
+      }
+
+      if(messageContent.content.length>500){
+        setError({ errorMessage: "Maximum message length 500 characters."});
         return;
       }
       
@@ -129,6 +130,11 @@ function TopicScreen() {
 
       //dont send empty message
       if(!updateMessage.updatedcontent) {
+        return;
+      }
+
+      if(messageContent.content.length>500){
+        setError({ errorMessage: "Maximum message length 500 characters."});
         return;
       }
       
@@ -178,13 +184,40 @@ function TopicScreen() {
       })
     }
 
-    useEffect(() => {
-      getMessages();
-    }, []);
+    /**
+   * load messages
+   */
+  useEffect(() => {
+    try{
+      async function fetchUserId() {
+        const id = await GetUserId();
+        if (id!=null) {
+            getMessages();
+        }else{
+          navigate('/login')
+        }
+      }
+        fetchUserId();
+      }
+      catch{
+          return;
+      }
+  }, []);
+
+  const logOut = async(event: React.MouseEvent) => {
+      event.preventDefault();
+      if(await LogOutUser()){
+        navigate('/login');
+      }
+    }
 
   return (
     <div className="flex flex-col justify-center">
-      <h1 className="top-0 uppercase text-cyan-900 p-5 w-full">{topicname}</h1>
+      <HeaderBar
+        topicname={topicname}
+        logOut={logOut}
+        />
+      <div className="mt-10">
       {messages ? messages.map((message) => (
         <div key={message.id}>
           <div className="border-2 m-3">
@@ -203,6 +236,7 @@ function TopicScreen() {
           </div>
         </div>
       )) : <h1>No messages found</h1>}
+      </div>
       <div className="w-4xl">
           <MessageForm
             message={messageContent.content}

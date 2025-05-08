@@ -22,14 +22,13 @@ public class Message
     public int id { get; set; }
     
     [Required]
-    [StringLength(500, ErrorMessage="Maximum length for the content is 500 characters.")]
+    [StringLength(500, MinimumLength =1, ErrorMessage="Maximum length for the content is 500 characters.")]
     public string? content { get; set; }
 
     [Required]
     public int topicid { get; set; }
 
-    [Required]
-    public int userid { get; set; }
+    public string? userid { get; set; }
 
     public int upvotes { get; set; }
 

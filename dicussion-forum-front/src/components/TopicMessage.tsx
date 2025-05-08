@@ -8,7 +8,7 @@ type MessageProps = {
   content: string;
   upvotes: number;
   postdate: Date;
-  userid: number;
+  userid: string;
   messageid: number;
   updateContent:string;
   username: string;
@@ -25,7 +25,7 @@ type MessageProps = {
 function TopicMessage (props: MessageProps) {
 
   const [isEditing, setIsEditing] = useState(false);
-  const [sessionUserId, setSessionUserId] = useState<number | null>(null);
+  const [sessionUserId, setSessionUserId] = useState<string | null>(null);
 
   /**
    * stop further propagations of the event and toggle the edit mode 
@@ -56,7 +56,7 @@ function TopicMessage (props: MessageProps) {
       if (id) {
         setSessionUserId(id);
       } else {
-        console.error('Failed to fetch user ID');
+        setSessionUserId(null);
       }
 
     }

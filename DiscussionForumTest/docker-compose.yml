@@ -5,16 +5,13 @@ services:
     environment: 
       POSTGRES_USER: admin1
       POSTGRES_PASSWORD: admin1
-      POSTGRES_DB: discussion-forum
-    # build: .
-    #  context: .
-    #  dockerfile: Dockerfile
+      POSTGRES_DB: discussion-forum-test
     ports:
-      - 5432:5432
+      - 5000:5000
   usermigrations:
     image: user-migrations
     build:
-     context: ./DiscussionForum
+     context: ../DiscussionForum
      dockerfile: Dockerfile
      target: usermigrations
     depends_on:
@@ -22,7 +19,7 @@ services:
   messagemigrations:
     image: message-migrations
     build:
-     context: ./DiscussionForum
+     context: ../DiscussionForum
      dockerfile: Dockerfile
      target: messagemigrations
     depends_on:
@@ -30,7 +27,7 @@ services:
   topicmigrations:
     image: topic-migrations
     build:
-     context: ./DiscussionForum
+     context: ../DiscussionForum
      dockerfile: Dockerfile
      target: topicmigrations
     depends_on:
@@ -40,23 +37,3 @@ services:
     restart: always
     ports:
       - 8088:8080
-  backend:
-    image: laurapihamaa623/discussion-forum:backend
-    build:
-      context: ./DiscussionForum
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - 5055:5055
-    depends_on:
-      - db
-  frontend:
-    image: laurapihamaa623/discussion-forum:frontend
-    build:
-      context: ./dicussion-forum-front
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - 5173:5173
-    depends_on:
-      - backend

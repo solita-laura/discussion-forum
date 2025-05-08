@@ -32,8 +32,8 @@ public class MessageService_UnitTests {
 
         var msgData = new List<Message>
         {
-            new Message{ id=1, topicid=1, userid=1, content="some content", postdate=DateTime.UtcNow},
-            new Message{ id=2, topicid=2, userid=2, content="some other content", postdate=DateTime.UtcNow}
+            new Message{ id=1, topicid=1, userid="1", content="some content", postdate=DateTime.UtcNow},
+            new Message{ id=2, topicid=2, userid="2", content="some other content", postdate=DateTime.UtcNow}
         };
 
 
@@ -49,7 +49,7 @@ public class MessageService_UnitTests {
 
         var msgService = new MessageService(msgContextMock.Object, topicContextMock.Object, userContextMock.Object);
 
-        var response = await msgService.CreateMessage(new Message{topicid=1, userid=1, content="some content"});
+        var response = await msgService.CreateMessage(new Message{topicid=1, userid="1", content="some content"});
         Assert.That(response, Is.TypeOf(typeof(OkObjectResult)));
 
         msgContextMock.Verify(m => m.messages.Add(It.IsAny<Message>()), Times.Once);
@@ -77,8 +77,8 @@ public class MessageService_UnitTests {
 
         var msgData = new List<Message>
         {
-            new Message{ id=1, topicid=1, userid=1, content="some content"},
-            new Message{ id=2, topicid=1, userid=2, content="some other content"}
+            new Message{ id=1, topicid=1, userid="1", content="some content"},
+            new Message{ id=2, topicid=1, userid="2", content="some other content"}
         };
 
         msgContextMock.Setup(m => m.messages)
@@ -110,8 +110,8 @@ public class MessageService_UnitTests {
 
         var msgData = new List<Message>
         {
-            new Message{ id=1, topicid=1, userid=1, content="some content", postdate=DateTime.UtcNow},
-            new Message{ id=2, topicid=1, userid=2, content="some other content", postdate=DateTime.UtcNow}
+            new Message{ id=1, topicid=1, userid="1", content="some content", postdate=DateTime.UtcNow},
+            new Message{ id=2, topicid=1, userid="2", content="some other content", postdate=DateTime.UtcNow}
         };
 
         msgContextMock.Setup(m => m.messages)
@@ -119,8 +119,7 @@ public class MessageService_UnitTests {
 
         var usrData = new List<User>
         {
-            new User{ id=1, username="user1"},
-            new User{ id=2, username="user2"}
+
         };
 
         userContextMock.Setup(u => u.users)

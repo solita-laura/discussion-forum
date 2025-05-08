@@ -1,7 +1,9 @@
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using DiscussionForum.Models;
 using DiscussionForum.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,15 +17,12 @@ namespace DiscussionForum.Controllers
     {
         private readonly TopicContext _context;
         private readonly MessageService _messageService;
+        private readonly UserManager<User> _userManager;
 
-        public TopicsController (TopicContext context, MessageService messageService){
+        public TopicsController (TopicContext context, MessageService messageService, UserManager<User> userManager){
             _context = context;
             _messageService = messageService;
-        }
-
-        protected int GetUserId ()
-        {
-            return int.Parse(User.Claims.FirstOrDefault(c => c.Type == "userid")?.Value ?? "0");
+            _userManager=userManager;
         }
 
         /// <summary>
@@ -53,7 +52,7 @@ namespace DiscussionForum.Controllers
         {
             try
             {
-                var id = GetUserId();
+                var id = _userManager.GetUserId(User);
                 topic.userid = id;
                 _context.topics.Add(topic);
                 await _context.SaveChangesAsync();
@@ -61,6 +60,7 @@ namespace DiscussionForum.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return BadRequest("Error creating topic");
             }
         }
@@ -73,23 +73,16 @@ namespace DiscussionForum.Controllers
         /// <returns>status code</returns>
 
         [HttpPut]
-        public async Task<ActionResult> UpdateTopic([FromQuery(Name ="topicid")] int id, [FromBody] string topicname)
+        [Authorize(Roles="Admin")]
+        public async Task<ActionResult> UpdateTopic([FromQuery(Name ="topicid")] int id, [FromBody] [StringLength(20, MinimumLength=1, ErrorMessage ="Topic name should be between 1 and 20 characters.")] string topicname)
         {
 
             try
             {
                 var topic = await _context.topics.FindAsync(id);
 
-                //topic name can only be updated if the message count is 0
-                if (topic.messagecount != 0)
-                {
-                    return BadRequest("Topic name cannot be updated as it has messages.");
-                }
-
-                var userid = GetUserId();
-                if (topic.userid != userid)
-                {
-                    return BadRequest("You are not authorized to update this topic.");
+                if(topic.messagecount!=0){
+                    return BadRequest("You can only modify topic name if the topic has no messages");
                 }
 
                 topic.topicname = topicname;
@@ -110,17 +103,12 @@ namespace DiscussionForum.Controllers
         /// <returns>status code</returns>
 
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteTopic([FromQuery(Name = "topicid")] int id)
         {
             try
             {
                 var topic = await _context.topics.FindAsync(id);
-
-                var userid = GetUserId();
-                if (topic.userid != userid)
-                {
-                    return BadRequest("You are not authorized to delete this topic.");
-                }
 
                 //delete the messages first
                 if (topic.messagecount != 0)

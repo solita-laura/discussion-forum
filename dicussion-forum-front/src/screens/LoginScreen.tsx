@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Form from '../components/Form';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GetUserId } from '../functions/GetUserId';
 
 /**
@@ -47,7 +47,7 @@ function LoginScreen(){
         }
 
         try{
-            await fetch('http://localhost:5055/api/Login', {
+            await fetch('http://localhost:5055/api/Auth/login-user', {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
@@ -57,9 +57,6 @@ function LoginScreen(){
             })
             .then(response => {
                 if (response.ok) {
-                    sessionStorage.setItem('role', response.headers.get('role') || '');
-                    sessionStorage.setItem('id', response.headers.get('id') || '');
-
                     setErrorValues({Error: ''});
                     navigate('/dashboard');
                 } else {
@@ -76,14 +73,18 @@ function LoginScreen(){
       */
 
      useEffect(() => {
+        try{
          async function fetchUserId() {
            const id = await GetUserId();
-           if (id) {
+           if (id!=null) {
              navigate('/dashboard');
            } 
          }
-         fetchUserId();
-       }, [navigate]);
+         fetchUserId();}
+        catch{
+            return;
+        }
+       }, []);
 
     return (
         <div>
@@ -97,6 +98,9 @@ function LoginScreen(){
                 addPassword={handleChange}
                 logUser={loginUser}
                 error = {errorValues.Error}/>
+            <div>
+                <p>Not a user yet? Please register <Link to="/registration" className="underline hover:text-gray-700">here</Link></p>
+            </div>
         </div>
     );
 }
