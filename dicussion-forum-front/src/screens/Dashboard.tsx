@@ -234,9 +234,13 @@ function Dashboard() {
   }
 
   const logOut = async(event: React.MouseEvent) => {
-    event.preventDefault();
-    if(await LogOutUser()){
-      navigate('/login');
+    try{
+      event.preventDefault();
+      if(await LogOutUser()){
+        navigate('/login');
+      }}
+    catch{
+      return;
     }
   }
 

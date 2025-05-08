@@ -37,7 +37,7 @@ function RegistrationScreen(){
         }
 
         if(!checkPassword(registrationValues.Password)){
-            setErrorValues({Error: 'Password should contain at least one lowercase letter, one uppercase letter and one special character (!@#$%^&*) and it should be between 8 to 20 characters long.'});
+            setErrorValues({Error: 'Password should contain at least one lowercase letter, one uppercase letter and one special character (!@#$%^&*) and it should be at least 8 characters long.'});
             return;
         }
 
@@ -75,13 +75,17 @@ function RegistrationScreen(){
      */
     
     useEffect(() => {
+        try{
              async function fetchUserId() {
                const id = await GetUserId();
                if (id) {
                  navigate('/dashboard');
                } 
              }
-             fetchUserId();
+             fetchUserId();}
+        catch{
+            return;
+            }
            }, [navigate]);
     
     /**
@@ -90,7 +94,7 @@ function RegistrationScreen(){
    */
 
   const checkPassword = (nameToValidate: string): boolean => {
-    return RegExp(('^(?=.*?[A-Za-z])(?=.*?[0-9])(?=.*[!@#$%^&*]).{8,20}$')).test(nameToValidate);
+    return RegExp(('^(?=.*?[A-Za-z])(?=.*?[0-9])(?=.*[!@#$%^&*]).{8,}$')).test(nameToValidate);
   }
 
     return (

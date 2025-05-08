@@ -57,6 +57,7 @@ function Topic(props: TopicProps) {
      * Get the user id from the server
      */
     useEffect(() => {
+    try{
       async function fetchUserRole() {
         const role = await GetUserRole();
         if (role) {
@@ -65,7 +66,10 @@ function Topic(props: TopicProps) {
           setUserRole(null);
         }
       }
-      fetchUserRole();
+      fetchUserRole();}
+    catch{
+      setUserRole(null);
+    }
     }, []);
 
   return (

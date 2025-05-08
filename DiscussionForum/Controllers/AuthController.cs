@@ -1,4 +1,5 @@
 using DiscussionForum.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -84,6 +85,7 @@ namespace DiscussionForum.Controllers
         /// <returns>string</returns>
 
         [HttpPost("logout-user")]
+        [Authorize]
         public async Task<ActionResult<string>> LogoutUser ()
         {
             try
@@ -105,6 +107,7 @@ namespace DiscussionForum.Controllers
         /// <returns>string</returns>
 
         [HttpGet("get-userid")]
+        [Authorize]
         public ActionResult<string> GetUserInfo()
         {
             try
@@ -127,6 +130,7 @@ namespace DiscussionForum.Controllers
         /// <returns>string</returns>
 
         [HttpGet("get-userrole")]
+        [Authorize]
         public async Task<ActionResult<string>> GetUserRole()
         {
             try

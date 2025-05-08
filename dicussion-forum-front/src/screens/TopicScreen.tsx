@@ -205,11 +205,15 @@ function TopicScreen() {
   }, []);
 
   const logOut = async(event: React.MouseEvent) => {
+    try{
       event.preventDefault();
       if(await LogOutUser()){
         navigate('/login');
       }
+    }catch{
+      return;
     }
+  }
 
   return (
     <div className="flex flex-col justify-center">

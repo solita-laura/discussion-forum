@@ -51,6 +51,7 @@ function TopicMessage (props: MessageProps) {
    * Get the user id from the server
    */
   useEffect(() => {
+    try{
     async function fetchUserId() {
       const id = await GetUserId();
       if (id) {
@@ -60,7 +61,10 @@ function TopicMessage (props: MessageProps) {
       }
 
     }
-    fetchUserId();
+    fetchUserId();}
+    catch{
+      setSessionUserId(null);
+    }
   }, []);
 
   return (
